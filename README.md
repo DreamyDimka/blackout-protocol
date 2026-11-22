@@ -51,6 +51,11 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 
 ## 📋 Update log
 
+**v2.1 (Nov 22, 2026)**
+- Survival timer in Kit and Supplies: days of water, food, heat fuel, phone power and meds
+- Add supplies: water containers, food by calories, heat fuel by BTU (propane, butane, kerosene, firewood)
+- Daily needs based on each person's age from the medical cards
+
 **v2 (Nov 22, 2026)**
 - New cleaner design with more motion, settings moved to the ⚙ menu
 - Plan tab: medical cards, family plan, neighbours, document photos, radio recorder, paper backup
