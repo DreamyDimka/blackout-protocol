@@ -4,46 +4,77 @@
 
 👉 **Open it:** https://dreamydimka.github.io/blackout-protocol/
 
-Install it from Chrome (⋮ → *Install app*) and it works with no internet or cell signal.
+Install it from Chrome (⋮ → *Install app*) and it works with no internet or cell signal. Built on one idea: assume **everything** is offline, 911 included, and put the answer in the app.
 
 ## Two modes
 
 **Prep mode** is for getting ready:
-- Readiness score and a 120+ item kit checklist (water, food, heat, light, power, first aid, tools, go-bag…)
-- Add your own gear
-- Prep routine with reminders (test alarms, charge power banks, rotate water, check expiry dates)
+- Readiness score, readiness per scenario, and a 170+ item kit checklist tagged by scenario
+- Quick add, edit any item, have / need quantities and expiry dates
+- 26 prep routines grouped monthly to every 2 years
+- Seasonal tips and a "Next up" list of what to do now
 - Test mode: practise a full emergency, then restore everything exactly as it was
 
 **Lockdown mode** is for when something happens. Pick the situation: blackout, winter storm, nuclear alert, cyber attack / war, or flood / heat / quake.
-- Emergency clock (T+) and a first-24-hours checklist split into the first hour, 6 hours and 24 hours
-- Inventory with counts and low / out tags
-- Food-safety timers (fridge, freezer) and a water-left estimate
-- Quick actions: SOS light, flashlight, siren, log, radio
+- "Stay or go?" check the moment lockdown starts
+- Emergency clock, day counter and a first-24-hours checklist, then a daily routine that resets every morning
+- "Runs out" dates for water, food, propane and each person's medicine, plus fridge and freezer timers
+- House temperature log with a freezing warning, and a phone battery plan
+- Inventory filtered to the situation, with low / out tags
+
+## Emergency
+
+- 12 one-tap emergency buttons (not breathing, bleeding, choking, won't wake, chest pain…)
+- CPR coach: 110 beats a minute, "switch person" alert every 2 minutes, hands-only or 30:2
+- Stay or go helper with a live answer pinned to the top
 
 ## Guide
 
-About 60 topics in 8 scenarios: blackout, winter storm, nuclear, cyber & war, fire & gas, first aid, survival skills, and flood / heat / quake. Searchable, and checked against official sources (Health Canada, Get Prepared Canada, CDC).
+About 100 topics in 9 sections, each with a **No help coming** part for when nobody can be reached:
+- First aid and a Health & 2nd aid section (wound closure, infection, dehydration, fever, medicines, babies, older adults)
+- Common over-the-counter medicine doses from Canadian labels
+- Blackout, winter storm, nuclear, cyber & war, fire & gas, survival skills, flood / heat / quake
+
+## Plan
+
+- Medical card for each person (allergies, conditions, medicines, blood type), shown full screen for helpers
+- Family emergency plan, neighbour check-in list, document photos (stored on the phone only)
+- Emergency numbers, radio stations and a broadcast recorder
+- **Paper backup:** print or save a PDF of your cards, plan, numbers, kit and key first aid pages
 
 ## Tools
 
-- Multi-timer with presets (boil water, bleach, CPR swaps, fallout shelter, check-ins…)
-- Event log with ~90 one-tap entries, stamped with time since the emergency started
-- Morse translator (text ↔ Morse, flash or beep it) and a **microphone Morse decoder**
-- Signal light (SOS, strobe, red night light), siren, whistle blasts
-- Calculators: rations, bleach drops, wind chill, propane heater hours, power bank charges, generator fuel, walking time
-- Compass and sunrise / sunset times
-- Emergency numbers and radio stations (currently Québec / Montréal)
+- Multi-timer (days, hours, minutes, seconds), event log, Morse translator and microphone Morse decoder
+- Signals: SOS light, siren, tap-to-sound pad, tone generator, vibration SOS, full-screen window sign
+- Calculators, compass, sunrise / sunset
+- Ultra saver mode (black and dim red) for maximum battery
+
+## 📋 Update log
+
+**v2 (Nov 22, 2026)**
+- New cleaner design with more motion, settings moved to the ⚙ menu
+- Plan tab: medical cards, family plan, neighbours, document photos, radio recorder, paper backup
+- Emergency buttons, CPR coach, stay-or-go helper (pops up when lockdown starts)
+- Long-outage tools: daily routine, day counter, runs-out dates, house temperature, phone power
+- Guide rewritten for "no help coming", with medicine doses, wound closure and 30+ new topics
+- Kit: scenario tags and filters, 36 new items, quick add, editing, quantities, expiry dates
+- Signals: tap-to-sound, tone generator, vibration, window sign
+- More prep routines, seasonal tips, ultra saver mode, long-press shortcuts on the app icon
+- New users start with an empty kit and zero supplies
+
+**v1 (Nov 22, 2026)**
+- First release: kit checklist, lockdown mode, guide, timers, Morse, signals, contacts
 
 ## 🚧 Updates on the way
 
-Blackout Protocol is actively being improved. Coming next: more regions beyond Québec (local numbers and radio), more guide topics and tools, and a Google Play release. Installed copies update themselves the next time you open the app online.
+Coming next: French, pictures in the guide, phone-to-phone sharing, more regions beyond Québec, and a Google Play release. Installed copies update themselves the next time you open the app online.
 
 Ideas or bugs? Open an issue on this repo.
 
 ## Privacy
 
-Everything stays on your device in your browser's storage. Nothing is sent anywhere. You can copy a backup and restore it on another phone.
+Everything stays on your device. Nothing is sent anywhere. Photos and recordings stay in the phone's storage and aren't included in the text backup.
 
 ## Disclaimer
 
-General safety information, not medical or professional advice. Always follow official instructions, and call 911 in an emergency.
+General safety information, not medical or professional advice. Always follow official instructions, and call 911 when you can.
