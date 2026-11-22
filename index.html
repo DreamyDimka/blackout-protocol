@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blackout Protocol</title>
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE terse field manual, everyday tool you trust in the dark
+   IDEA a civil-defence field manual crossed with a hazard placard
+   PICTURE readiness dial on Status; the grid-down clock takes over when the power is out
+   COLOUR black ground, hazard yellow leads, alarm red for danger, green for secured
+   TYPE Black Ops One stencil for titles + Barlow / Barlow Condensed
+   LAYOUT one-screen app: header, scrolling view, bottom tab bar; single column up to 720px */
+:root{color-scheme:dark;--bg:#0c0c0b;--p:#161614;--p2:#201f1c;--ln:#2e2d29;--ink:#f1efe6;--dim:#a8a59a;--y:#ffd400;--r:#ff4136;--g:#3ddc84}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit;color:inherit}
+header{background:#000;padding:12px 16px 0}
+.hd{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto}
+.logo{width:38px;height:38px;flex:none;border-radius:50%;background:var(--y);display:grid;place-items:center}
+.logo svg{width:32px;height:32px}
+h1{font:400 23px/1.05 'Black Ops One',Impact,sans-serif;margin:0;color:var(--y)}
+.sub{font:600 15px/1.3 'Barlow Condensed',Barlow,sans-serif;color:var(--dim)}
+.sub b{color:var(--r)}
+.stripe{height:8px;margin:12px -16px 0;background:repeating-linear-gradient(-45deg,var(--y) 0 12px,#000 12px 24px)}
+main{overflow-y:auto;overscroll-behavior:contain}
+.v{max-width:720px;margin:0 auto;padding:16px 16px 32px}
+nav{background:#000;border-top:1px solid var(--ln);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{background:none;border:0;padding:8px 2px 10px;display:grid;justify-items:center;gap:3px;color:var(--dim);font:600 14px/1 'Barlow Condensed',sans-serif;min-height:58px;cursor:pointer}
+nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav button[aria-current=page]{color:var(--y)}
+.card{background:var(--p);border:1px solid var(--ln);border-radius:14px;padding:16px;margin-bottom:14px}
+h2{font:400 21px/1.1 'Black Ops One',Impact,sans-serif;margin:0 0 10px}
+h3{font:700 19px/1.2 'Barlow Condensed',sans-serif;margin:0}
+p{margin:0 0 10px}
+.dim{color:var(--dim)}
+.sm{font-size:14px}
+.gauge{display:grid;justify-items:center;text-align:center}
+.gauge svg{width:min(100%,340px);height:auto;display:block}
+.bars{display:grid;gap:9px;margin-top:16px}
+.bar{display:grid;grid-template-columns:8.6em minmax(0,1fr) 3em;align-items:center;gap:10px;font:600 15px/1.2 'Barlow Condensed',sans-serif}
+.bar span:last-child{text-align:right;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap}
+.trk{display:block;height:10px;background:var(--p2);border-radius:6px;overflow:hidden}
+.trk i{display:block;height:100%;border-radius:6px;transition:width .4s}
+.trk.thin{height:4px;margin-top:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:50px;padding:10px 16px;border-radius:12px;border:2px solid var(--y);background:var(--y);color:#000;font:700 18px/1.1 'Barlow Condensed',sans-serif;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--y)}
+.btn.red{background:var(--r);border-color:var(--r);color:#fff}
+.btn.wide{width:100%}
+.btn:active{transform:translateY(1px)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.alarm{border-color:var(--r);background:linear-gradient(#2b0d0b,#150807)}
+.alarm h2{color:var(--r)}
+.clock{font:400 clamp(36px,11vw,56px)/1 'Black Ops One',Impact,sans-serif;color:var(--r);font-variant-numeric:tabular-nums;margin:4px 0 6px;white-space:nowrap}
+.fc{display:grid;gap:12px;margin:10px 0 16px}
+.fc .trk{height:12px}
+.fr{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;font-size:15px;margin-bottom:5px}
+.fr span{color:var(--dim)}
+.wl{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-top:6px}
+.big2{font:400 30px/1.1 'Black Ops One',Impact,sans-serif;color:var(--y);white-space:nowrap}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:10px}
+.kpis div{display:grid;align-content:start}
+.kpis .dim{font-size:14px;line-height:1.3}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.li{display:flex;gap:12px;align-items:flex-start;width:100%;padding:13px 2px;background:none;border:0;border-top:1px solid var(--ln);text-align:left;cursor:pointer}
+.box{flex:none;width:28px;height:28px;border:2px solid #6d6a60;border-radius:7px;display:grid;place-items:center;margin-top:-1px}
+.li.on .box{background:var(--g);border-color:var(--g)}
+.box::after{content:"";width:12px;height:7px;border:3px solid #000;border-top:0;border-right:0;transform:translateY(-2px) rotate(-45deg) scale(.2);opacity:0;transition:transform .3s var(--ease),opacity .2s}
+.li.on .box::after{transform:translateY(-2px) rotate(-45deg) scale(1);opacity:1}
+.tx{display:grid;gap:2px;flex:1}
+.nm{font-weight:600}
+.nm>span{background:linear-gradient(currentColor,currentColor) left 55%/0 2px no-repeat;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:background-size .35s var(--ease),color .3s}
+.li.on .nm{color:var(--dim)}
+.li.on .nm>span{background-size:100% 2px}
+.nt{font-size:14px;color:var(--dim);line-height:1.35}
+.crit{justify-self:start;font:700 13px/1 'Barlow Condensed',sans-serif;color:var(--r);border:1px solid var(--r);border-radius:999px;padding:3px 7px;margin-top:2px}
+.li.on .crit{display:none}
+.q{flex:none;font:700 15px/1.2 'Barlow Condensed',sans-serif;background:var(--p2);border:1px solid var(--ln);border-radius:999px;padding:4px 10px;white-space:nowrap;max-width:7.5em;overflow:hidden;text-overflow:ellipsis}
+.ch{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:2px 0;min-height:44px;text-align:left;cursor:pointer}
+.dot{width:12px;height:12px;border-radius:3px;flex:none}
+.cn{margin-left:auto;font:700 16px 'Barlow Condensed',sans-serif;color:var(--dim);white-space:nowrap}
+.chev{width:22px;height:22px;flex:none;fill:none;stroke:var(--dim);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.open .chev{transform:rotate(90deg)}
+.acc .chev{margin-left:auto}
+.acc .ch>span{display:grid;gap:2px}
+.kc{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;margin-bottom:14px;align-items:center}
+input[type=search],input[type=number],input[type=text],input[type=datetime-local],textarea{width:100%;font-size:16px;background:#080807;border:1.5px solid #3a3934;border-radius:10px;padding:11px 12px;min-height:48px}
+textarea{min-height:92px;resize:vertical;line-height:1.4}
+label{display:block;font:700 16px/1.2 'Barlow Condensed',sans-serif;margin:14px 0 6px}
+.seg{display:inline-flex;border:1.5px solid #3a3934;border-radius:10px;overflow:hidden;flex-wrap:wrap}
+.seg button{background:none;border:0;padding:10px 14px;min-height:46px;font:700 16px 'Barlow Condensed',sans-serif;cursor:pointer;color:var(--dim)}
+.seg button[aria-pressed=true]{background:var(--y);color:#000}
+.seg.full{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;margin-bottom:14px}
+.gb{margin-top:12px;border-top:1px solid var(--ln);padding-top:12px}
+.gb ol,.gb ul{margin:0 0 10px;padding-left:22px}
+.gb li{margin:7px 0}
+.gb h3{margin:14px 0 6px;color:var(--y)}
+.warn{border-left:4px solid var(--r);background:#260d0b;padding:10px 12px;border-radius:8px;margin:0 0 12px}
+.cg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cg label{margin-top:0;min-height:2.4em;display:flex;align-items:flex-end}
+.stp{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;border:1.5px solid #3a3934;border-radius:10px;overflow:hidden;min-height:48px}
+.stp button{background:var(--p2);border:0;font:700 22px 'Barlow Condensed',sans-serif;cursor:pointer;color:var(--y)}
+.stp span{display:grid;place-items:center;font:700 20px 'Barlow Condensed',sans-serif}
+.lg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mdir{font:700 14px 'Barlow Condensed',sans-serif;color:var(--y);margin-top:12px}
+.mres{font:700 22px/1.45 'Barlow Condensed',sans-serif;letter-spacing:.05em;overflow-wrap:anywhere;background:#080807;border:1px solid var(--ln);border-radius:10px;padding:12px;margin:6px 0 12px;min-height:58px}
+.mchart{display:grid;grid-template-columns:repeat(auto-fill,minmax(5.4em,1fr));gap:6px}
+.mc{background:var(--p2);border-radius:8px;padding:7px 9px;display:flex;justify-content:space-between;gap:6px;font:700 17px/1 'Barlow Condensed',sans-serif}
+.mc span{color:var(--y);letter-spacing:.08em}
+.mc.sos{outline:2px solid var(--r)}
+.tmd{font:400 clamp(44px,14vw,68px)/1 'Black Ops One',Impact,sans-serif;text-align:center;margin:6px 0 14px;font-variant-numeric:tabular-nums}
+.tmd.done{color:var(--r)}
+.num{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--ln)}
+.num:first-of-type{border-top:0}
+.num a{color:var(--y);font:700 21px 'Barlow Condensed',sans-serif;white-space:nowrap;text-decoration:none}
+.foot{text-align:center;margin-top:6px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.6em,1fr));gap:8px;margin-bottom:14px}
+.chips button{background:var(--p);border:1.5px solid #3a3934;border-radius:10px;min-height:46px;padding:8px 10px;font:700 16px/1.1 'Barlow Condensed',sans-serif;color:var(--dim);cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--y);border-color:var(--y);color:#000}
+.tag{font:700 13px/1 'Barlow Condensed',sans-serif;color:var(--y)}
+.freq{font:400 20px/1 'Black Ops One',Impact,sans-serif;color:var(--y);white-space:nowrap}
+.meter{position:relative;height:14px;background:var(--p2);border-radius:7px;margin:14px 0 0;overflow:visible}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:7px;width:0;transition:width .05s}
+.meter b{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--r);border-radius:2px}
+input[type=range]{width:100%;accent-color:var(--y);height:40px}
+.cg2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cg2 label{margin-top:12px}
+select{width:100%;font-size:16px;background:#080807;border:1.5px solid #3a3934;border-radius:10px;padding:11px 12px;min-height:48px;color:var(--ink)}
+.chk{display:flex;align-items:center;gap:10px;margin:14px 0;font:600 16px Barlow,sans-serif}
+.chk input{width:24px;height:24px;accent-color:var(--y)}
+.co{display:grid;gap:4px;margin-top:14px;padding-top:12px;border-top:1px solid var(--ln)}
+.btn.pre{display:grid;gap:2px;justify-items:center;font-size:16px;padding:8px}
+.btn.pre small{font:600 13px 'Barlow Condensed',sans-serif;opacity:.8}
+.trow{padding:12px 0;border-top:1px solid var(--ln)}
+.trow:first-child{border-top:0}
+.trow.done .tv{color:var(--r)}
+.th{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.tv{font:400 clamp(34px,10vw,48px)/1.1 'Black Ops One',Impact,sans-serif;font-variant-numeric:tabular-nums;margin:4px 0 8px;white-space:nowrap}
+.tbtn{display:flex;flex-wrap:wrap;gap:8px}
+.tbtn .btn{min-height:44px;padding:8px 14px;font-size:16px}
+.le{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--ln)}
+.le:first-child{border-top:0}
+.lt{font:700 14px 'Barlow Condensed',sans-serif;color:var(--y);white-space:nowrap}
+.lxb{background:none;border:1px solid var(--ln);border-radius:8px;color:var(--dim);width:40px;height:40px;cursor:pointer;flex:none}
+.le.em .lx{color:var(--r);font-weight:700}
+.le .lt{line-height:1.25}
+#testbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--r);color:#fff;margin:0 -16px;padding:8px 16px;font:600 15px/1.3 'Barlow Condensed',sans-serif}
+#testbar[hidden]{display:none}
+#testbar button{background:#fff;color:#000;border:0;border-radius:8px;min-height:40px;padding:6px 12px;font:700 15px 'Barlow Condensed',sans-serif;cursor:pointer;flex:none}
+.hd #modep{flex:none;border:2px solid var(--y);background:transparent;color:var(--y);border-radius:999px;min-height:40px;padding:6px 14px;font:700 15px 'Barlow Condensed',sans-serif;cursor:pointer;transition:background-color .25s,color .25s,border-color .25s}
+body.lock #modep{background:var(--r);border-color:var(--r);color:#fff;animation:glow 2.6s ease-in-out infinite}
+body.lock header{background:#180504}
+body.lock .stripe{background:repeating-linear-gradient(-45deg,var(--r) 0 12px,#000 12px 24px)}
+body.lock #ind{background:var(--r);box-shadow:0 0 14px var(--r)}
+body.lock nav button[aria-current=page]{color:var(--r)}
+body.lock .logo{background:var(--r)}
+header,nav{transition:background-color .4s}
+.pill{font:700 14px 'Barlow Condensed',sans-serif;background:var(--r);color:#fff;border-radius:999px;padding:5px 12px;white-space:nowrap}
+details summary{cursor:pointer;color:var(--dim);min-height:32px}
+#sheet{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s ease}
+#sheet[hidden]{display:none}
+.sh{background:var(--p);border-top:3px solid var(--r);border-radius:18px 18px 0 0;width:100%;max-width:720px;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));animation:inSheet .35s var(--ease)}
+@keyframes inSheet{from{transform:translateY(100%)}}
+.shl{display:grid;gap:10px}
+.q.st1{background:#3a2e00;border-color:var(--y);color:var(--y)}
+.q.st2{background:#3a0d0a;border-color:var(--r);color:#ff8a80}
+.q.st3{opacity:.6}
+.sup{padding:12px 0;border-top:1px solid var(--ln)}
+.sup.miss{opacity:.55}
+.supt{display:flex;gap:10px;align-items:flex-start}
+.supt .q{cursor:pointer;min-height:36px;color:var(--ink)}
+.ivr{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:8px 0 0 22px}
+.ivr .stp{width:172px;grid-template-columns:44px minmax(0,1fr) 44px}
+.ivr input{border:0;background:transparent;text-align:center;font:700 19px 'Barlow Condensed',sans-serif;min-height:44px;width:100%;padding:0;color:var(--ink)}
+.phase{margin-top:14px;padding:4px 12px 6px;border:1px solid var(--ln);border-radius:12px;transition:border-color .3s}
+.phase.now{border-color:var(--y);box-shadow:inset 0 0 0 1px var(--y)}
+.phh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:8px}
+.ph{display:flex;gap:10px;font:700 14px 'Barlow Condensed',sans-serif;color:var(--dim);white-space:nowrap}
+.ph.od{color:var(--r)}
+.ldot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;flex:none;vertical-align:1px}
+.lcs button{display:flex;align-items:center;text-align:left;line-height:1.15}
+.lp{border-color:color-mix(in srgb,var(--cc) 55%,#3a3934);color:var(--ink);font-size:16px;min-height:50px}
+.lp:hover{box-shadow:0 0 0 1px var(--cc)}
+.lp.ask{border-style:dashed}
+.whos{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 12px}
+.whos button{background:var(--p2);border:1.5px solid #3a3934;border-radius:999px;min-height:40px;padding:6px 14px;font:700 15px 'Barlow Condensed',sans-serif;color:var(--dim);cursor:pointer;transition:background-color .2s,color .2s}
+.whos button[aria-pressed=true]{background:var(--y);color:#000;border-color:var(--y)}
+.whos .lnk{background:none;border:0;color:var(--y);text-decoration:underline;padding:6px 4px}
+.since{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5em,1fr));gap:8px}
+.sn{background:var(--p2);border-radius:10px;padding:10px 12px;display:grid;gap:2px}
+.sn b{font:700 18px 'Barlow Condensed',sans-serif}
+.lfc{margin-bottom:10px}
+.lfc button{min-height:40px;font-size:15px}
+.prb{min-height:42px;padding:6px 14px;font-size:16px;flex:none}
+body.saver *,body.saver *::before,body.saver *::after{animation:none!important;transition:none!important}
+.lw{display:flex;align-items:center;gap:8px}
+.lw .li{flex:1}
+.cmpsvg{width:min(80vw,260px);height:auto;display:block}
+#rose{transition:transform .15s linear}
+.mraw{overflow-wrap:anywhere;margin:-6px 0 12px;letter-spacing:.06em}
+#light{position:fixed;inset:0;z-index:50;background:#fff;display:flex;align-items:flex-end;justify-content:center;padding:28px;color:#8a8a8a;font:600 17px 'Barlow Condensed',sans-serif;cursor:pointer}
+#light[hidden]{display:none}
+#light.red{background:#b00000}
+#toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,20px);background:var(--y);color:#000;font:700 16px 'Barlow Condensed',sans-serif;padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:calc(100% - 32px);text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:420px){.cg{grid-template-columns:minmax(0,1fr)}.cg label{min-height:0}.kpis .big2{font-size:25px}.bar{grid-template-columns:7.2em minmax(0,1fr) 2.8em}}
+
+:root{--ease:cubic-bezier(.2,.8,.2,1)}
+.btn,.chips button,.seg button,nav button,.lxb,.stp button,.ch{transition:transform .15s var(--ease),background-color .2s,border-color .2s,color .2s,box-shadow .25s}
+.btn,.chips button,nav button{position:relative;overflow:hidden}
+.btn:active,.chips button:active,.seg button:active,.lxb:active,.stp button:active{transform:scale(.95)}
+.btn:hover{box-shadow:0 0 0 1px var(--y),0 6px 18px rgba(255,212,0,.12)}
+.btn.red:hover{box-shadow:0 6px 20px rgba(255,65,54,.3)}
+.rip{position:absolute;border-radius:50%;transform:scale(0);background:currentColor;opacity:.28;pointer-events:none;animation:rip .6s var(--ease) forwards}
+@keyframes rip{to{transform:scale(2.6);opacity:0}}
+nav{position:relative}
+#ind{position:absolute;top:-1px;left:0;width:20%;height:3px;background:var(--y);border-radius:0 0 3px 3px;box-shadow:0 0 14px var(--y);transition:transform .45s var(--ease)}
+nav svg{transition:transform .35s var(--ease)}
+nav button[aria-current=page] svg{transform:translateY(-2px) scale(1.14)}
+.li{transition:background-color .2s}
+.li:active{background:rgba(255,255,255,.03)}
+.box{transition:background-color .2s,border-color .2s}
+.li.on .box{animation:pop .4s var(--ease)}
+@keyframes pop{40%{transform:scale(1.28)}}
+.leaving{animation:out .3s var(--ease) forwards}
+@keyframes out{to{opacity:0;transform:translateX(36px)}}
+@keyframes inR{from{opacity:0;transform:translateX(28px)}}
+@keyframes inL{from{opacity:0;transform:translateX(-28px)}}
+@keyframes inU{from{opacity:0;transform:translateY(16px) scale(.985)}}
+@keyframes inD{from{opacity:0;transform:translateY(-8px)}}
+@keyframes grow{from{width:0}}
+@keyframes arc{from{stroke-dasharray:0 100}}
+@keyframes fade{from{opacity:0}}
+#v.fr-r{animation:inR .38s var(--ease) both}
+#v.fr-l{animation:inL .38s var(--ease) both}
+.enter .card,.enter .chips{animation:inU .5s var(--ease) both}
+.enter .card:nth-child(2){animation-delay:.05s}.enter .card:nth-child(3){animation-delay:.1s}.enter .card:nth-child(4){animation-delay:.15s}.enter .card:nth-child(5){animation-delay:.2s}.enter .card:nth-child(6){animation-delay:.25s}.enter .card:nth-child(n+7){animation-delay:.3s}
+.enter .arc{animation:arc 1.1s var(--ease) .15s both}
+.enter .bar .trk i{animation:grow .9s var(--ease) both;animation-delay:calc(var(--d) + .25s)}
+.enter .gauge svg line{animation:fade .6s ease both .1s}
+.pop .gb{animation:inD .35s var(--ease) both}
+.pop .chev{animation:chev .3s var(--ease)}
+@keyframes chev{from{transform:rotate(0)}}
+.pop .li{animation:inU .32s var(--ease) both}
+.pop .li:nth-child(2){animation-delay:.03s}.pop .li:nth-child(3){animation-delay:.06s}.pop .li:nth-child(4){animation-delay:.09s}.pop .li:nth-child(5){animation-delay:.12s}.pop .li:nth-child(n+6){animation-delay:.15s}
+.alarm{animation:glow 2.6s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 1px var(--r),0 0 30px rgba(255,65,54,.35)}}
+.stripe{animation:hz 4s linear infinite}
+@keyframes hz{to{background-position:33.94px 0}}
+body.down .logo svg{animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sub b::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--r);margin-right:6px;vertical-align:1px;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.2}}
+.trow.done{animation:shake .5s var(--ease)}
+.trow.done .tv{animation:blink 1s ease-in-out infinite}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+#light{animation:fade .2s ease}
+#testbar{animation:inD .3s var(--ease)}
+.le:first-child{animation:inD .35s var(--ease)}
+.chips button[aria-pressed=true]{box-shadow:0 4px 16px rgba(255,212,0,.25)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <div class="logo" id="logo"></div>
+    <div style="flex:1"><h1>Blackout Protocol</h1><div class="sub" id="sub">4 survivors</div></div><button id="modep" data-act="modep">Prep</button>
+  </div>
+  <div class="stripe"></div>
+  <div id="testbar" hidden><span><b>Test mode.</b> Nothing you do now is kept.</span><button data-act="testend" id="tbtn">End test</button></div>
+</header>
+<main id="m"><div class="v" id="v"></div></main>
+<nav aria-label="Sections"><span id="ind" aria-hidden="true"></span>
+  <button data-act="tab" data-t="status"><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M12 17l4-5"/></svg><span class="nl">Status</span></button>
+  <button data-act="tab" data-t="kit"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/></svg><span class="nl">Kit</span></button>
+  <button data-act="tab" data-t="guide"><svg viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4z"/><path d="M20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg><span class="nl">Guide</span></button>
+  <button data-act="tab" data-t="tools"><svg viewBox="0 0 24 24"><path d="M15 4a5 5 0 0 0-4.8 6.4L4 16.6 7.4 20l6.2-6.2A5 5 0 0 0 20 9l-3 1-2-2 1-3z"/></svg><span class="nl">Tools</span></button>
+  <button data-act="tab" data-t="contacts"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span class="nl">Contacts</span></button>
+</nav>
+<div id="sheet" hidden><div class="sh" role="dialog" aria-modal="true" aria-labelledby="shh"><h2 id="shh">Enter lockdown</h2><p class="dim">What's happening? The app switches to that situation's checklist and guide.</p><div class="shl"></div><button class="btn ghost wide" data-act="lockcancel" style="margin-top:12px">Cancel</button></div></div>
+<div id="light" hidden><span>Tap anywhere to stop</span></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+{
+const C=[
+{n:'Water',c:'#4aa8ff',i:[
+['Stored drinking water','112 L','4 L per person per day, e.g. 6 × 20 L jugs',0,1],
+['Small water bottles','12','Easy to carry',0,0],
+['Water filter (Sawyer / LifeStraw family)','1','',0,0],
+['Purification tablets','1 pack','',0,0],
+['Unscented bleach','1 bottle','2 drops per litre, wait 30 min',0,0],
+['Collapsible water jugs','2','For refills',0,0],
+['Fill bathtub when outage starts','—','For flushing toilets',0,0],
+['Know backup water sources','—','Hot water tank, toilet tank',0,0],
+['Rotate stored water','—','Every time the clocks change',0,0]]},
+{n:'Food',c:'#ff8a3d',i:[
+['Canned meat, tuna, chili, soup','28+ cans','About 2,000 kcal per person per day',0,1],
+['Canned beans, veggies, fruit','14+ cans','',0,0],
+['Peanut butter','2 jars','',0,0],
+['Crackers','4 boxes','',0,0],
+['Granola / energy bars','30','',0,0],
+['Trail mix, nuts, dried fruit','2 kg','',0,0],
+['Cereal / oatmeal','3 boxes','',0,0],
+['Shelf-stable milk','6 L','',0,0],
+['Instant coffee, tea, hot chocolate','1 each','',0,0],
+['Rice and pasta','2 kg each','Needs boiling water',0,0],
+['Comfort snacks','—','Chocolate, chips, candy',0,0],
+['Manual can opener','2','One spare',0,1],
+['Cooler + ice packs','1','Keep food inside: Health Canada says not outside, even in winter',0,0]]},
+{n:'Cooking',c:'#ff5a4e',i:[
+['2-burner camp stove','1','Outdoors only',1,0],
+['1 lb propane cylinders','6–8','',1,0],
+['Spare 20 lb BBQ propane tank','1','Keep full',1,0],
+['Pot, kettle, frying pan','1 each','',0,0],
+['Paper plates, cups, utensils','1 week','',0,0],
+['Aluminum foil','1 roll','',0,0],
+['Lighters','4','',0,0],
+['Waterproof matches','2 boxes','',0,0]]},
+{n:'Heat & shelter',c:'#b98cff',i:[
+['Indoor-rated (CSA) propane heater','1','Mr. Heater Buddy type, crack a window',1,1],
+['Battery CO detector','2','Mandatory with any heater',1,1],
+['Sleeping bags rated −10°C or lower','4','',1,1],
+['Wool blankets','4+','',1,0],
+['Emergency mylar blankets','4','',1,0],
+['Thermal underwear','4 sets','',1,0],
+['Wool socks','8 pairs','',0,0],
+['Tuques and gloves','4 each','',0,0],
+['Hand and foot warmers','1 big box','',0,0],
+['Plastic sheeting + tape for windows','1 roll each','',0,0],
+['Towels / draft stoppers for doors','—','',0,0],
+['Tent to set up indoors','1','Traps body heat',1,0],
+['Dry firewood','—','If you have a fireplace or wood stove',1,0],
+['Know where the water main is','—','Drain pipes if the house is about to freeze',0,1],
+['Plumber number for frozen pipes','—','Get an expert to thaw them',1,0]]},
+{n:'Light',c:'#ffd400',i:[
+['Headlamps','4','One per person',0,1],
+['LED lanterns','2–3','',0,0],
+['Flashlights','2–4','',1,0],
+['AA batteries','48','',0,1],
+['AAA batteries','24','',0,0],
+['Glow sticks','12','',0,0],
+['Candles in sturdy holders','—','Last resort, never unattended',0,0]]},
+{n:'Power & comms',c:'#2fd4c4',i:[
+['Power banks (20,000 mAh)','2–4','Keep charged',0,1],
+['Portable power station (EcoFlow / Jackery)','1','Optional',0,0],
+['Solar panel for power station','1','Optional',0,0],
+['Car USB charger / inverter','1','',0,0],
+['Crank or battery radio with USB','1','News if internet is down',0,1],
+['Walkie-talkies','2–4','Cell network may fail',0,0],
+['Inverter generator','1','Optional. Outdoors only, 6 m+ from the house',0,0],
+['Heavy-duty extension cord','1','For the generator',0,0],
+['Gas cans with fuel stabilizer','2','Keep full: gas pumps need power',0,0],
+['Offline maps downloaded on phones','—','',0,0],
+['Hydro-Québec Info-pannes app','—','Outages: 1 800 790-2424',0,0]]},
+{n:'Docs & plan',c:'#c9c7bd',i:[
+['Written family emergency plan','1','Write it down and keep a copy in the kit',0,1],
+['Printed contact list','1','',0,0],
+['Copies of IDs, insurance, health cards','1 set','In a waterproof bag',0,0],
+['Cash in small bills','$500+','Cards and ATMs may fail',0,1],
+['Spare house and car keys','1 set','',0,0],
+['Local paper map','1','',0,0],
+['Pen and notepad','1','',0,0]]},
+{n:'First aid',c:'#ff6fb5',i:[
+['First aid kit','1','Bandages, antiseptic wipes, gloves',0,1],
+['Prescription meds','7–14 days','Each family member',0,1],
+['Tylenol / Advil','1 each','',0,0],
+['Antihistamine','1','',0,0],
+['Imodium, antacids','1 each','',0,0],
+['Electrolyte packets','12','',0,0],
+['Thermometer','1','',0,0],
+['Face masks','1 box','Also for fallout dust',0,0],
+['Burn gel, gauze','1 each','',0,0],
+['Spare glasses / contacts','—','',0,0]]},
+{n:'Hygiene',c:'#3ddc84',i:[
+['Toilet paper','12 rolls','',0,0],
+['Paper towels','4 rolls','',0,0],
+['Wet wipes','4 packs','',0,0],
+['Hand sanitizer','2','',0,0],
+['Heavy-duty garbage bags','1 box','Also for bagging contaminated clothes',0,0],
+['Backup toilet: bucket + bags + kitty litter','1 set','',0,1],
+['Dish soap','1','',0,0],
+['Toothbrushes, toothpaste','—','',0,0],
+['Dry shampoo','1','',0,0],
+['Feminine products','—','',0,0]]},
+{n:'Tools & safety',c:'#ffb020',i:[
+['ABC fire extinguisher','1–2','',0,1],
+['Battery smoke detectors','—','Test the batteries',1,1],
+['Multitool','1','',0,0],
+['Utility knife','1','',0,0],
+['Duct tape','2 rolls','',0,0],
+['Zip ties, rope','1 each','',0,0],
+['Tarp','1','',0,0],
+['Wrench for gas shutoff','1','',0,0],
+['Whistle','4','One per person',0,0],
+['Snow shovel','1','',0,0],
+['Ice melt / salt','1 bag','',0,0],
+['Work gloves','2 pairs','',0,0]]},
+{n:'Vehicle',c:'#7cc4ff',i:[
+['Keep gas tank at least half full','—','Always',0,0],
+['Snow brush / scraper','1','',0,0],
+['Car blanket','1','',0,0],
+['Jumper cables','1','',1,0],
+['Phone charging cable','1','',1,0]]},
+{n:'Morale',c:'#a99cff',i:[
+['Cards, board games','—','',0,0],
+['Books','—','',0,0],
+['Change of clothes and footwear','4 sets','',0,0],
+['Pet food and water','—','If pets: 30 mL water per kg per day',0,0]]},
+{n:'Go-bag',c:'#d4b483',i:[
+['Backpack, one per adult','1 each','Sturdy, waterproof if you can',0,1],
+['Water bottles','2 L each','Plus a filter or tablets to refill',0,1],
+['Ready-to-eat food','3 days','Bars, nuts, dried fruit',0,1],
+['Small first aid kit','1','',0,1],
+['Meds and copies of prescriptions','7 days','',0,1],
+['Headlamp and spare batteries','1 each','',0,0],
+['Power bank and cables','1','Keep it charged',0,0],
+['Pocket radio','1','',0,0],
+['Cash in small bills','$200+','',0,0],
+['Copies of IDs and contacts','1 set','In a zip bag',0,0],
+['Warm layer, hat, gloves, rain jacket','1 each','',0,0],
+['Sturdy shoes and spare socks','1 pair','',0,0],
+['Whistle, multitool, duct tape','1 each','',0,0],
+['Masks, sanitizer, wipes','1 pack','',0,0],
+['Paper map with meeting spots','1','',0,0],
+['Spare house and car keys','1 set','',0,0],
+['Emergency blankets','1 each','',0,0]]}
+];
+
+const G={
+blackout:[
+{t:'First hour',k:'Do these when the lights go out',b:`<ol>
+<li><b>Start the blackout clock</b> on the Status tab.</li>
+<li><b>Check if it's just you.</b> Look at neighbours and street lights, check your breaker panel, then the Hydro-Québec Info-pannes app. Report it: 1 800 790-2424.</li>
+<li><b>Keep the fridge and freezer shut.</b></li>
+<li><b>Unplug electronics</b> and appliances. Leave one lamp switched on so you know when power is back.</li>
+<li><b>Fill the bathtub</b> and spare jugs while water pressure lasts. Tub water is for flushing.</li>
+<li><b>Layer everyone up</b> and pick one small room to keep warm.</li>
+<li><b>Save phone battery:</b> low-power mode, lower brightness, text instead of calling.</li>
+<li><b>Turn on the radio</b> (Contacts tab has stations) and check on neighbours, especially older people.</li></ol>`},
+{t:'Heat and carbon monoxide',k:'The two things most likely to hurt you',b:`<div class="warn"><b>Never</b> use a BBQ, camp stove, generator or charcoal indoors, in a garage or on a covered porch, even with the door open. Never sit in a car running in a garage.</div>
+<ul><li>Only use heaters rated for indoor use (CSA), with a window cracked and a battery CO detector in the room.</li>
+<li>Keep heaters at least 1 m from anything that can burn: blankets, curtains, furniture.</li>
+<li>Close doors to unused rooms. Cover windows with blankets or plastic and block drafts under doors.</li>
+<li>Wear hats, wool socks and layers. Sleep in one room, or in a tent set up indoors.</li>
+<li>Eat and drink warm things. Your body makes heat from food.</li></ul>
+<h3>Signs of CO poisoning</h3><p>Headache, dizziness, nausea, weakness, confusion, sleepiness. Several people feeling sick at once is a red flag.</p>
+<div class="warn">CO alarm or symptoms: get everyone outside into fresh air right away, then call 911. Don't go back in.</div>`},
+{t:'Water',k:'4 L per person per day',b:`<ul><li>Plan on 4 L per person per day for drinking, cooking and washing. For 4 people that's 16 L a day.</li>
+<li>Backup water: the hot water tank, and the toilet tank (not the bowl, and not if you use tank cleaners).</li></ul>
+<h3>Make water safe</h3><ul><li><b>Boil:</b> a rolling boil for at least 1 minute.</li>
+<li><b>Bleach:</b> unscented household bleach (about 5.25%). 2 drops per litre of clear water, mix, cover, wait 30 minutes. It should smell slightly of chlorine. If not, add 2 more drops and wait 15 minutes.</li>
+<li><b>Cloudy, or colder than 10°C:</b> double the bleach and wait 1 to 2 hours.</li>
+<li><b>Tablets or filter:</b> follow the package.</li></ul><p class="sm dim">Boiling and bleach kill germs but don't remove chemicals or fuel.</p>`},
+{t:'Food safety',k:'Fridge 4 h, freezer 24–48 h',b:`<ul><li>Keep the doors shut. A closed fridge keeps food cold about 4 hours. A full freezer keeps food frozen about 48 hours, a half-full one about 24.</li>
+<li>Eat fridge food first, then freezer food, then your emergency stock.</li>
+<li><b>Don't put food outside, even in winter.</b> Health Canada advises against it.</li>
+<li>Keep a thermometer in the fridge. It should read 4°C or colder.</li>
+<li>Spoiled food can look and smell fine. If in doubt, throw it out.</li></ul>`},
+{t:'Frozen pipes',k:'If the house is going to freeze',b:`<ul><li>If the heat will be off long enough for the house to near freezing, shut off the water main and open the taps at the lowest point of the house to drain the pipes. Flush the toilets to empty the tanks.</li>
+<li>Find the main valve <b>before</b> you need it.</li>
+<li>Never thaw pipes with an open flame. Get an expert to thaw frozen pipes.</li>
+<li>When you turn the water back on, open the taps to let the air out.</li></ul>`},
+{t:'Generator rules',k:'Outdoors, 6 m away, exhaust pointed out',b:`<div class="warn">Generators make deadly carbon monoxide. Only run one outside, at least 6 m (20 ft) from the house, with the exhaust pointed away from doors, windows and vents. Never in a garage, even with the door open.</div>
+<ul><li>Plug appliances into the generator with a heavy-duty outdoor extension cord.</li>
+<li>Never plug a generator into a wall outlet. Connecting to house wiring needs a transfer switch installed by a qualified electrician.</li>
+<li>Turn it off and let it cool before refuelling. Store fuel away from the house.</li>
+<li>Keep a CO detector running inside.</li></ul>`},
+{t:'Cold injuries',k:'Hypothermia and frostbite',b:`<h3>Hypothermia</h3><p>Signs: strong shivering, slurred speech, clumsiness, confusion, drowsiness. Shivering that <b>stops</b> while the person is still cold is a bad sign.</p>
+<ul><li>Move them somewhere warmer and swap wet clothes for dry.</li><li>Warm the core first: chest, neck, head and groin, with blankets, or skin-to-skin in a sleeping bag.</li><li>If they're alert, give warm, sweet drinks. No alcohol.</li><li>Handle gently. Call 911 for confusion, drowsiness or no shivering.</li></ul>
+<h3>Frostbite</h3><p>Signs: numb skin that looks white, grey or waxy, often on fingers, toes, ears and nose.</p>
+<ul><li>Warm gently with body heat or lukewarm (not hot) water.</li><li>Don't rub it, and keep it away from heaters and fire: numb skin burns easily.</li><li>Don't rewarm it if it could freeze again. Get medical help.</li></ul>`},
+{t:'Sanitation',k:'When toilets stop working',b:`<ul><li>No water pressure: flush by pouring a bucket of tub water straight into the bowl.</li>
+<li>Backup toilet: a bucket lined with two heavy garbage bags, a scoop of kitty litter after each use. Seal the bag and store it outside, away from the house.</li>
+<li>Wash hands or use sanitizer after the toilet and before food.</li><li>Keep trash bagged and sealed.</li></ul>`},
+{t:'Comms plan',k:'When phones and internet go down',b:`<ul><li>Texts often get through when calls don't. Keep calls short.</li>
+<li>Save battery: low-power mode, airplane mode when not needed, one phone on at a time.</li>
+<li>A battery or crank radio is your news source if the internet is down.</li>
+<li>Agree on a meeting spot near home and one out of the area, and write them down for everyone.</li>
+<li>Signal for help: 3 whistle blasts, or SOS with a light (Tools tab).</li></ul>`},
+{t:'When to leave',k:"Don't wait too long",b:`<p>Go to family, friends or a municipal warming centre if:</p>
+<ul><li>The house keeps getting colder and you can't keep everyone warm.</li><li>A CO alarm goes off or anyone has CO symptoms (get out first, then call 911).</li><li>Someone needs power for medical equipment, or medications that must stay cold.</li><li>You run out of safe water or heating fuel.</li></ul>
+<p>Take water, food, meds, IDs, cash, chargers and warm clothes. Shut the water main if the house may freeze, and leave a note saying where you went.</p>`},
+{t:'When power returns',k:'Bring things back slowly',b:`<ul><li>Wait a few minutes, then plug in and turn on appliances one at a time.</li>
+<li>Check fridge and freezer food before eating it. If in doubt, throw it out.</li>
+<li>Check for leaks from frozen pipes.</li>
+<li>Stop the blackout clock, then restock and recharge everything you used.</li></ul>`}],
+winter:[
+{t:'Ice storm',k:'Falling ice and downed lines',b:`<ul><li>Stay inside while ice builds up. Branches and ice fall without warning; stay away from trees and power lines.</li>
+<li><b>Downed power line:</b> stay at least 10 m away, keep others and pets back, and call 911 and Hydro-Québec. Never touch the line or anything touching it, like a fence, car or puddle.</li>
+<li>If a line falls on your car, stay inside and call 911. Only leave if the car is on fire: jump clear without touching the car and the ground at the same time, then shuffle away with small steps.</li>
+<li>Clear ice and snow from vents and the furnace and dryer exhausts so CO doesn't build up indoors.</li></ul>`},
+{t:'Stuck in your car',k:'Stay with the vehicle',b:`<ul><li>Stay in the car. It's shelter and easier for rescuers to spot. Don't walk off in a storm.</li>
+<li>Run the engine only in short bursts (about 10 minutes every half hour) with a window open a crack, and keep the exhaust pipe clear of snow.</li>
+<li>Turn on the dome light at night and tie something bright to the antenna or door.</li>
+<li>Keep moving: clap, stretch, wiggle toes. Use the car blanket, and don't let everyone sleep at once.</li>
+<li>Keep a winter car kit: shovel, sand or kitty litter for traction, booster cables, blanket, warm clothes, food, water, flashlight, phone charger.</li></ul>`},
+{t:'Cold outdoors',k:'Shovelling and wind chill',b:`<ul><li>Shovelling is hard on the heart. Take breaks, push the snow instead of lifting, and stop if you feel chest pain or get short of breath.</li>
+<li>Cover all skin when wind chill is severe. Exposed skin can freeze in minutes.</li>
+<li>Dress in layers: a wicking base, a warm middle, a windproof shell. Wet clothes steal heat fast, so change them.</li>
+<li>Keep paths salted and clear for emergency access.</li></ul>`},
+{t:'Roof, snow and ice dams',k:'After a big dump',b:`<ul><li>Don't climb on the roof during an emergency. Falls are a top winter injury and hospitals may be stretched.</li>
+<li>Keep gas meters, vents and exhausts clear of snow.</li>
+<li>Watch ceilings for leaks or sagging after heavy snow and ice.</li></ul>`}],
+nuclear:[
+{t:'If you see the flash',k:'The first seconds',b:`<ul><li>Don't look at the flash.</li>
+<li>Drop behind anything solid, face down, and cover your head. Stay down until the blast wave and shaking pass. It can take many seconds to reach you.</li>
+<li>Then get inside the nearest building right away. You have about 10 minutes or more before fallout starts to arrive.</li></ul>
+<div class="warn">Cars, tents, mobile homes and the outdoors do not protect you from fallout. Get inside a building.</div>`},
+{t:'Get inside, stay inside, stay tuned',k:'Shelter for at least 24 hours',b:`<ul><li><b>Get inside:</b> brick or concrete is best. Go to the basement or the middle of the building, away from outer walls and the roof.</li>
+<li><b>Stay inside</b> for at least 24 hours unless authorities tell you otherwise. Fallout is most dangerous in the first hours and drops quickly after that.</li>
+<li>Stay where you are even if family members are somewhere else. Reunite later. Going outside early can expose you to a deadly dose.</li>
+<li>Close windows and doors. Turn off fans, air exchangers and other appliances.</li>
+<li>Bring pets inside.</li>
+<li><b>Stay tuned:</b> battery and crank radios will still work. Phone, text and internet may be down.</li></ul>`},
+{t:'Decontamination',k:'Get the dust off',b:`<ul><li>If you were outside after fallout arrived, take off your outer layer of clothing as you come in. That removes up to 90% of the radioactive material.</li>
+<li>Take it off slowly so dust doesn't shake loose. Seal it in a plastic bag and put it away from people and pets.</li>
+<li>Shower with soap and shampoo. <b>No conditioner:</b> it makes radioactive material stick to hair. Don't scrub or scratch your skin, and keep cuts covered.</li>
+<li>No shower: wash your hands, face and any uncovered skin at a sink, or wipe with a wet cloth.</li>
+<li>Gently blow your nose and wipe your eyelids, eyelashes and ears.</li>
+<li>Put on clean clothes from a closed drawer or closet. Wipe down pets.</li></ul>`},
+{t:'Food, water and medicine',k:'What is still safe',b:`<ul><li>Food and drinks in sealed cans, bottles and packages are safe. Wipe the outside before opening.</li>
+<li>Tap water is safe for washing skin, hair and clothes. Follow official advice before drinking it.</li>
+<li>Don't eat food that was outdoors or uncovered, or garden produce, until officials say it's safe.</li>
+<li>Keep taking your regular medications.</li></ul>`},
+{t:'Potassium iodide (KI)',k:'Only when told to',b:`<div class="warn">Only take KI pills if public health authorities tell you to.</div>
+<ul><li>KI only protects the thyroid from radioactive iodine. It does nothing against other radioactive material.</li>
+<li>It only helps in specific situations and timeframes, and can be harmful if used incorrectly.</li>
+<li>Canada says you don't need KI in your kit unless you live near a nuclear power plant.</li></ul>`},
+{t:'Radiation sickness signs',k:'When to get help',b:`<p>Nausea, vomiting, diarrhea, headache or fever in the hours or days after exposure can be early signs of radiation sickness.</p>
+<ul><li>Follow official instructions on where to go for medical checks.</li><li>Treat injuries first. Keep the person warm, hydrated and resting.</li></ul>`},
+{t:'Coming out',k:'After the first 24 hours',b:`<ul><li>Leave only when officials say it's safe, or if staying is more dangerous (fire, gas leak, collapse).</li>
+<li>When you go out, wear a mask, cover your skin, and travel the way officials direct.</li>
+<li>Keep bagged clothing outside your living space.</li></ul>`}],
+cyber:[
+{t:'Assume it lasts',k:'A grid attack is not a storm',b:`<ul><li>A cyberattack or war blackout can hit a wide area at once and take longer to fix. Plan for at least 7 days, ideally 14.</li>
+<li>Expect banks, ATMs, card terminals, gas pumps, cell networks and internet to fail with the power.</li>
+<li>Keep cash in small bills, a full gas tank and gas cans, paper copies of documents, and a printed contact list.</li>
+<li>Refill prescriptions early. Pharmacies may close.</li></ul>`},
+{t:'Trusted information only',k:'Rumours spread faster than facts',b:`<ul><li>Stick to official sources: Alert Ready emergency alerts on TV, radio and phones, government channels, Hydro-Québec and the news stations in the Contacts tab.</li>
+<li>Expect fake messages. Never click links or give personal or bank details in texts or calls claiming to be the government, Hydro-Québec or your bank.</li>
+<li>Check a claim against a second official source before acting on it or passing it on.</li>
+<li>Write down official instructions and the time you heard them.</li></ul>`},
+{t:'Air-raid or missile alert',k:'If an alert says take cover',b:`<ul><li>Go inside immediately, to the basement or lowest floor, away from windows.</li>
+<li>Stay there until an official all-clear. Keep the radio on.</li>
+<li>If it turns out to be nuclear, switch to the Nuclear guide: stay inside at least 24 hours.</li></ul>`},
+{t:'Secure your home',k:'Keep a low profile',b:`<ul><li>Don't post about your supplies, generator or fuel online.</li>
+<li>Keep doors locked. Light-proof the room you're using at night.</li>
+<li>Know your neighbours. Agree how you'll check on each other and share what you can.</li>
+<li>Keep a fire extinguisher handy. Candles, stoves and heaters raise the fire risk, and fire crews may be slow.</li></ul>`},
+{t:'Comms when networks fail',k:'Low-tech beats no-tech',b:`<ul><li>Set check-in times and meeting spots in advance. If you can't reach each other, go to the meeting spot at the agreed time.</li>
+<li>Walkie-talkies on one agreed channel for the household and neighbours.</li>
+<li>Battery or crank radio for news.</li>
+<li>Signal with Morse using a light, whistle or knocks (Tools tab). Three of anything, like blasts or flashes, means help.</li>
+<li>Amateur (ham) radio reaches far, but transmitting in Canada needs a licence. Anyone can listen.</li></ul>`},
+{t:'Health without a hospital',k:'Prevent what you cannot treat',b:`<ul><li>Hospitals may be overloaded. Skip risky jobs: chainsaws, ladders, roofs, ice.</li>
+<li>Keep clean: wash hands, treat all drinking water, keep cuts clean and covered.</li>
+<li>Stay warm, fed and hydrated. Cold and dehydration make every injury worse.</li>
+<li>Keep a printed first aid guide in the kit.</li></ul>`},
+{t:'When systems come back',k:'Expect scams and glitches',b:`<ul><li>Check bank and card statements for odd charges.</li>
+<li>Update phones and computers, and change important passwords once services are stable.</li>
+<li>Expect scams posing as relief payments, Hydro-Québec refunds or bank checks.</li>
+<li>Restock the kit and note what ran out first.</li></ul>`}],
+fire:[
+{t:'House fire',k:'Get out, stay out',b:`<div class="warn">Get everyone out, then call 911 from outside. Never go back in for anything.</div>
+<ul><li>Crawl low under smoke, where the air is cleaner.</li>
+<li>Feel doors with the back of your hand before opening. If it's hot, use another way out.</li>
+<li>Close doors behind you to slow the fire.</li>
+<li>Meet at one spot outside that everyone knows, so you can count heads.</li>
+<li>Clothes on fire: stop, drop and roll, covering your face.</li>
+<li>Trapped: close the door, block gaps with wet towels, call 911 and signal from the window.</li></ul>`},
+{t:'Fire extinguisher',k:'P.A.S.S.',b:`<ul><li>Only fight a small fire, with your back to a clear exit. If it's not out in a few seconds, leave.</li>
+<li><b>Pull</b> the pin. <b>Aim</b> at the base of the fire. <b>Squeeze</b> the handle. <b>Sweep</b> side to side.</li>
+<li>Grease fire on the stove: turn off the heat and slide a lid over the pan. <b>Never use water</b> on a grease fire.</li></ul>`},
+{t:'Gas leak',k:'Rotten egg smell',b:`<div class="warn">Natural gas smells like rotten eggs. Leave right away and call 911 from outside. If 911 isn't working, call Énergir's emergency line: 1 800 361-8003.</div>
+<ul><li>Don't make sparks: no light switches, phones, lighters or matches near the leak, and no smoking.</li>
+<li>If it doesn't slow your exit, open doors and windows on the way out.</li>
+<li>Don't go back in until emergency crews say it's safe.</li>
+<li>Only shut the gas valve if there's a leak or officials tell you to. A technician has to turn it back on.</li></ul>`},
+{t:'Candles and heaters',k:'The top blackout fire causes',b:`<ul><li>Use flashlights and lanterns before candles. If you must use candles, put them in sturdy holders away from anything that burns, and never leave them unattended or near kids and pets.</li>
+<li>Keep heaters at least 1 m from blankets, curtains and furniture.</li>
+<li>Test smoke alarms. Keep spare batteries.</li></ul>`}],
+aid:[
+{t:'Check, call, care',k:'The first 30 seconds',b:`<ol><li><b>Check</b> the scene is safe for you: fire, gas, traffic, downed lines.</li>
+<li><b>Call</b> 911, or have someone call. Put the phone on speaker; the dispatcher will coach you.</li>
+<li><b>Care</b> for the most serious problem first: not breathing, severe bleeding, choking.</li></ol>
+<p class="sm dim">Take a Red Cross or St. John Ambulance first aid course. Practice beats reading.</p>`},
+{t:'CPR',k:'Not breathing normally',b:`<div class="warn">Unresponsive and not breathing normally: call 911 and start CPR right away. Send someone for an AED (defibrillator) if one is near.</div>
+<ul><li>Put the heel of one hand in the centre of the chest, other hand on top.</li>
+<li>Push hard and fast: at least 5 cm deep, 100 to 120 pushes a minute. Let the chest come all the way back up.</li>
+<li>Not trained in rescue breaths? Do hands-only CPR: keep pushing without stopping.</li>
+<li>Switch with someone every 2 minutes if you can. Don't stop until help arrives or the person starts breathing.</li></ul>`},
+{t:'Choking',k:'Can\'t breathe, cough or speak',b:`<ul><li>If they can cough, let them keep coughing.</li>
+<li>If they can't: give 5 firm back blows between the shoulder blades, then 5 abdominal thrusts (fist just above the belly button, pull in and up). Repeat until it clears.</li>
+<li>If they become unresponsive, call 911 and start CPR.</li>
+<li>Choking alone: thrust your belly against the back of a chair.</li></ul>`},
+{t:'Severe bleeding',k:'Pressure, pressure, pressure',b:`<ul><li>Press hard on the wound with a clean cloth or gauze, and keep pressing. Don't lift it to check.</li>
+<li>If blood soaks through, add more on top and keep pressing.</li>
+<li>Life-threatening bleeding from an arm or leg that won't stop: a tourniquet 5 to 7 cm above the wound, tightened until bleeding stops. Note the time.</li>
+<li>Call 911. Keep the person lying down and warm.</li></ul>`},
+{t:'Burns',k:'Cool it down',b:`<ul><li>Cool the burn under cool running water for at least 10 minutes.</li>
+<li>Take off rings and tight things before it swells. Don't pull off clothing stuck to the burn.</li>
+<li>No ice, butter or creams. Cover loosely with a clean, non-stick dressing or plastic wrap.</li>
+<li>Call 911 for large burns, burns to the face, hands, groin or airway, chemical or electrical burns.</li></ul>`},
+{t:'Heart attack and stroke',k:'Call 911 fast',b:`<h3>Heart attack</h3><p>Chest pain or pressure, pain spreading to the arm, jaw or back, shortness of breath, cold sweat, nausea. Call 911, keep them resting. The dispatcher may tell you to have them chew an aspirin.</p>
+<h3>Stroke: think FAST</h3><ul><li><b>F</b>ace drooping</li><li><b>A</b>rm weakness</li><li><b>S</b>peech slurred or strange</li><li><b>T</b>ime to call 911, and note when it started.</li></ul>`},
+{t:'Broken bones and sprains',k:'Keep it still',b:`<ul><li>Don't straighten a broken bone. Support it in the position you found it with padding, a splint (board, rolled magazine) or a sling.</li>
+<li>Check fingers or toes stay warm and pink after splinting.</li>
+<li>Sprains: rest, ice wrapped in cloth for 20 minutes at a time, light compression, raise it.</li>
+<li>Suspected head, neck or back injury: don't move them unless they're in danger. Call 911.</li></ul>`},
+{t:'Shock',k:'Pale, cold, clammy',b:`<ul><li>Signs: pale or grey skin, cold sweat, fast weak pulse, fast breathing, confusion, after injury or bleeding.</li>
+<li>Call 911. Have them lie down, treat the cause (like bleeding), keep them warm and calm.</li>
+<li>Don't give food or drink.</li></ul>`},
+{t:'Allergic reaction',k:'Use the EpiPen',b:`<ul><li>Signs of a severe reaction: swelling of the face or throat, trouble breathing, hives, dizziness.</li>
+<li>If they have an epinephrine auto-injector, use it in the outer thigh right away, then call 911.</li>
+<li>A second dose may be needed after 5 to 15 minutes if symptoms don't improve.</li></ul>`}],
+skills:[
+{t:'Water from snow and outdoors',k:'Treat everything',b:`<ul><li>Melt snow or ice in a pot, then boil or treat it. Don't eat snow: it chills your body and costs heat.</li>
+<li>Rain, rivers and pools: let it settle, pour through a clean cloth, then boil or treat.</li>
+<li>Never drink water that smells of fuel or chemicals. Treating won't fix that.</li></ul>`},
+{t:'Cooking with less fuel',k:'Make your propane last',b:`<ul><li>Cook outside only. Use lids, and cook one-pot meals.</li>
+<li>Heat-retention trick: bring rice or pasta to a boil for a few minutes, then wrap the covered pot in blankets or put it in a cooler. It keeps cooking without fuel.</li>
+<li>Canned food can be eaten cold. Save hot food for morale and warmth.</li></ul>`},
+{t:'Rationing',k:'Water first, then calories',b:`<ul><li>Drink what you need. Ration activity and sweat, not water.</li>
+<li>Eat perishables first, then the freezer, then the stock.</li>
+<li>Aim for about 2,000 kcal a person a day. Fats and peanut butter give the most energy per bite.</li>
+<li>Track what you have on the Status tab, and recount daily.</li></ul>`},
+{t:'Navigation without GPS',k:'Sun, stars, paper',b:`<ul><li>Keep a paper map of the area with your meeting spots marked.</li>
+<li>The sun rises roughly in the east and sets in the west. At midday it's due south here.</li>
+<li>At night, find the Big Dipper. The two stars at the end of its cup point to the North Star.</li>
+<li>Pick a landmark in the direction you want to go, walk to it, pick the next one.</li></ul>`},
+{t:'Signalling for help',k:'Be seen and heard',b:`<ul><li>Three of anything means help: 3 whistle blasts, 3 flashes, 3 fires or piles.</li>
+<li>SOS in Morse: ··· ––– ··· (Tools tab has a light and sound version).</li>
+<li>Bright cloth on a car antenna, a door or a window.</li>
+<li>Flash sunlight with a mirror or phone screen toward planes or searchers.</li></ul>`},
+{t:'Morale and mental health',k:'Keep the family steady',b:`<ul><li>Keep a routine: set times for meals, sleep and check-ins.</li>
+<li>Give everyone a job. Feeling useful beats feeling helpless.</li>
+<li>Limit news to scheduled updates. Constant rumours wear people down.</li>
+<li>Talk about worries. Kids need simple, honest explanations and play.</li>
+<li>Sleep and warmth matter more than you think. Take turns resting.</li></ul>`},
+{t:'Evacuating',k:'When you have to go',b:`<ul><li>Leave when officials tell you to. Use the routes they give; shortcuts may be blocked.</li>
+<li>Grab the go-bag: water, food, meds, IDs, cash, chargers, warm clothes, radio, flashlight.</li>
+<li>Bring pets with food and a carrier.</li>
+<li>Lock the house, leave a note saying where you went, and tell your out-of-area contact.</li>
+<li>Only turn off utilities if officials tell you to, or if there's a gas leak.</li></ul>`},
+{t:'Pets',k:'Plan for them too',b:`<ul><li>Pets need about 30 mL of water per kg of body weight each day.</li>
+<li>Keep a week of food, any meds, a leash and a carrier.</li>
+<li>Keep them inside during storms, smoke or fallout.</li></ul>`}],
+other:[
+{t:'Flood',k:'Never walk or drive through it',b:`<ul><li>Move valuables and supplies upstairs. Evacuate if told to.</li>
+<li>Never walk or drive through floodwater. Fast water only ankle-deep can knock you down, and a little water can float a car.</li>
+<li>Only shut off the electricity if the area around the panel is dry and safe.</li>
+<li>After: don't use flooded appliances until checked, and follow any boil-water advisory.</li></ul>`},
+{t:'Heat wave and summer outage',k:'Heat kills quietly',b:`<ul><li>Drink water often, even before you're thirsty. Close blinds by day, open windows at night.</li>
+<li>Stay on the lowest floor. Cool showers or wet cloths help.</li>
+<li><b>Heat exhaustion:</b> heavy sweating, dizziness, nausea, headache. Move to a cool place, drink water, rest.</li>
+<li><b>Heat stroke:</b> confusion, very hot skin, fainting. Call 911 and cool them fast with water and fanning.</li>
+<li>Check on older neighbours twice a day.</li></ul>`},
+{t:'Earthquake',k:'Drop, cover, hold on',b:`<ul><li><b>Drop</b> to your hands and knees, take <b>cover</b> under a sturdy table, <b>hold on</b> until the shaking stops.</li>
+<li>Stay away from windows and tall furniture. Don't run outside during shaking.</li>
+<li>After: expect aftershocks. Check for gas leaks, fires and injuries.</li></ul>`},
+{t:'Chemical spill or toxic smoke',k:'Shelter in place',b:`<ul><li>Get inside right away. Close and lock windows and doors.</li>
+<li>Turn off the furnace, air exchanger and exhaust fans, and close the fireplace damper.</li>
+<li>Go to an inside room above ground with few windows. Many chemicals sink, so avoid the basement.</li>
+<li>Keep the radio on and stay put until officials give the all-clear.</li></ul>`},
+{t:'Wildfire smoke',k:'Protect your lungs',b:`<ul><li>Keep windows and doors closed. Set the air exchanger to recirculate if you can.</li>
+<li>A well-fitted N95 mask helps outdoors. Cloth masks don't.</li>
+<li>Limit hard activity outside. Watch older people, kids and anyone with asthma.</li></ul>`},
+{t:'Tornado or violent wind',k:'Lowest, smallest, innermost',b:`<ul><li>Go to the basement, or an inside room on the lowest floor, away from windows.</li>
+<li>Cover your head and neck. A mattress or blankets over you helps.</li>
+<li>In a car with no shelter nearby: buckle up, get below the windows and cover your head.</li></ul>`}]
+};
+const GT=[['blackout','Blackout'],['winter','Winter storm'],['nuclear','Nuclear'],['cyber','Cyber & war'],['fire','Fire & gas'],['aid','First aid'],['skills','Survival skills'],['other','Flood, heat, quake']];
+const M={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.',0:'-----','.':'.-.-.-',',':'--..--','?':'..--..',"'":'.----.','!':'-.-.--','/':'-..-.','(':'-.--.',')':'-.--.-','&':'.-...',':':'---...',';':'-.-.-.','=':'-...-','+':'.-.-.','-':'-....-','"':'.-..-.','@':'.--.-.'};
+const R=Object.fromEntries(Object.entries(M).map(([k,v])=>[v,k]));
+const TABS=['status','kit','guide','tools','contacts'];
+const K='blackout_protocol_v1';
+const D={done:{},open:{},plan:{},bo:null,people:4,water:112,food:7,filter:'all',q:'',gs:'blackout',go:{},mo:'SOS',gq:'',timers:[],log:[],cv:{},tt:'timers',custom:[],mode:'prep',scen:'',acts:{},low:{},inv:{},pr:{},saver:0,supAll:0,lc:'health',lf:'all',who:'Everyone',names:''};
+let S=null;
+try{S=JSON.parse(localStorage.getItem(K)||'null')}catch(e){S=null}
+S=Object.assign({},D,S||{});if(!Array.isArray(S.timers))S.timers=[];if(!Array.isArray(S.log))S.log=[];if(!Array.isArray(S.custom))S.custom=[];
+if(!S.init){C.forEach((c,ci)=>c.i.forEach((it,ii)=>{if(it[3])S.done[ci+'-'+ii]=1}));S.init=1}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+let ALL=[],N=0;
+function buildAll(){ALL=[];C.forEach((c,ci)=>c.i.forEach((it,ii)=>ALL.push({id:ci+'-'+ii,ci,it})));S.custom.forEach(x=>{if(C[x.ci])ALL.push({id:x.id,ci:x.ci,it:x.it,u:1})});ALL.sort((a,b)=>a.ci-b.ci);N=ALL.length}
+buildAll();
+const nDone=()=>ALL.filter(x=>S.done[x.id]).length;
+const pct=()=>Math.round(nDone()/N*100);
+const pad=n=>String(n).padStart(2,'0');
+let tab='status',endArm=false,resetArm=false;
+
+let testArm=false,BAK=null;try{BAK=localStorage.getItem(K+'_bak')}catch(e){}
+const NL={prep:['Status','Kit','Guide','Tools','Contacts'],lock:['Now','Supplies','Guide','Tools','Radio']};
+const hdr=()=>{document.body.classList.toggle('saver',!!S.saver);const lk=S.mode==='lock'&&!!S.bo;document.body.classList.toggle('down',!!S.bo);document.body.classList.toggle('lock',lk);const mp=$('modep');if(mp)mp.textContent=lk?'Lockdown':'Prep';document.querySelectorAll('nav .nl').forEach((n,i)=>n.textContent=NL[lk?'lock':'prep'][i]);const tb=$('testbar');if(tb){tb.hidden=!S.test;$('tbtn').textContent=testArm?'Tap again to restore':'End test'}$('sub').innerHTML=lk?`<b>${(SCN[S.scen]||SCN.blackout).n}</b> · ${tplus(Date.now())}`:`${S.people} survivors · ${pct()}% ready${prDue()?` · ${prDue()} prep due`:''}`};
+
+function tref(){let p='';[210,330,90].forEach(c=>{const a1=(c-30)*Math.PI/180,a2=(c+30)*Math.PI/180,pt=(r,a)=>`${(12+r*Math.cos(a)).toFixed(2)} ${(12+r*Math.sin(a)).toFixed(2)}`;p+=`M${pt(3.4,a1)}L${pt(11,a1)}A11 11 0 0 1 ${pt(11,a2)}L${pt(3.4,a2)}A3.4 3.4 0 0 0 ${pt(3.4,a1)}Z`});return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${p}" fill="#000"/><circle cx="12" cy="12" r="2.2" fill="#000"/></svg>`}
+
+function gauge(p){
+  let t='';
+  for(let i=0;i<=20;i++){const a=Math.PI*(1+i/20),mj=i%5===0,r2=mj?124:117;t+=`<line x1="${(120+110*Math.cos(a)).toFixed(1)}" y1="${(128+110*Math.sin(a)).toFixed(1)}" x2="${(120+r2*Math.cos(a)).toFixed(1)}" y2="${(128+r2*Math.sin(a)).toFixed(1)}" stroke="${mj?'#ffd400':'#4a4943'}" stroke-width="${mj?3:2}"/>`}
+  const col=p<34?'#ff4136':p<75?'#ffd400':'#3ddc84',arc='M24 128A96 96 0 0 1 216 128';
+  return `<svg viewBox="0 0 240 140" role="img" aria-label="Readiness ${p} percent">${t}<path d="${arc}" pathLength="100" fill="none" stroke="#2e2d29" stroke-width="20"/><path d="${arc}" pathLength="100" fill="none" stroke="${col}" class="arc" stroke-width="20" stroke-dasharray="${Math.max(p,.5)} 100"/><text x="120" y="120" text-anchor="middle" fill="#f1efe6" font-family="'Black Ops One',Impact,sans-serif" font-size="48">${p}%</text></svg>`;
+}
+const catBars=()=>C.map((c,ci)=>{const its=ALL.filter(x=>x.ci===ci),d=its.filter(x=>S.done[x.id]).length;return `<div class="bar" style="--d:${ci*45}ms"><span>${c.n}</span><span class="trk"><i style="width:${d/its.length*100}%;background:${c.c}"></i></span><span>${d}/${its.length}</span></div>`}).join('');
+
+function itemRow(x,cat){
+  const on=!!S.done[x.id],it=x.it,note=(cat?C[x.ci].n+(it[2]?'. ':''):'')+it[2];
+  const row=`<button class="li${on?' on':''}" data-act="tog" data-id="${x.id}" aria-pressed="${on}"><span class="box" aria-hidden="true"></span><span class="tx"><span class="nm"><span>${esc(it[0])}</span></span>${note?`<span class="nt">${esc(note)}</span>`:''}${it[4]?'<span class="crit">Critical</span>':''}${x.u?'<span class="tag">Added by you</span>':''}</span><span class="q">${esc(it[1])}</span></button>`;
+  return x.u&&!cat?`<div class="lw">${row}<button class="lxb" data-act="gdel" data-id="${x.id}" aria-label="Remove ${esc(it[0])}">✕</button></div>`:row;
+}
+const dur=ms=>{const s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400);return (d?d+'d ':'')+pad(Math.floor(s%86400/3600))+':'+pad(Math.floor(s%3600/60))+':'+pad(s%60)};
+const hrs=h=>h>=24?(h/24).toFixed(1)+' days':h>=1?Math.round(h)+' h':Math.max(1,Math.round(h*60))+' min';
+const loc=ts=>{const d=new Date(ts);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`};
+
+function boLive(){
+  const e=Date.now()-S.bo,eh=e/36e5;
+  const food=[['Fridge, door closed',4],['Half-full freezer',24],['Full freezer',48]].map(([n,h])=>{const r=eh/h,col=r<.75?'var(--g)':r<1?'var(--y)':'var(--r)',txt=r<.75?hrs(h-eh)+' left':r<1?hrs(h-eh)+' left. Check the temperature':'Past the limit. If in doubt, throw it out';return `<div><div class="fr"><b>${n}</b><span>${txt}</span></div><span class="trk"><i style="width:${Math.min(r,1)*100}%;background:${col}"></i></span></div>`}).join('');
+  const daily=S.people*4,left=Math.max(S.water-daily*e/864e5,0);
+  return `<div class="clock">T+ ${dur(e)}</div><div class="sm dim">Since ${esc(new Date(S.bo).toLocaleString([],{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}))}</div><h3 style="margin-top:16px">Food clock</h3><div class="fc">${food}</div><h3>Water left</h3><div class="wl"><span class="big2">${Math.round(left)} L</span><span class="dim">${(left/daily).toFixed(1)} days for ${S.people} at 4 L each a day</span></div>`;
+}
+
+const PR=[['alarms','Test smoke and CO alarms',30],['charge','Charge power banks, radio and headlamps',30],['meds','Check meds and first aid expiry dates',90],['drill','Run a test drill (Test mode)',90],['water','Rotate stored water',180],['food','Check food expiry dates',180],['plan','Update contacts and meeting spots',180],['car','Check the car kit, tires and wipers',365]];
+const prDue=()=>PR.filter(([k,l,d])=>!S.pr[k]||Date.now()-S.pr[k]>d*864e5).length;
+function prCard(){const now=Date.now();return `<section class="card"><h2>Prep routine</h2><p class="sm dim">Small jobs that keep the kit ready. Tap Done when you do one.</p>${PR.map(([k,l,d])=>{const t=S.pr[k],age=t?Math.floor((now-t)/864e5):null,due=!t||age>d,left=t?d-age:0;return `<div class="num"><span><b>${l}</b><span class="nt" style="display:block;${due?'color:var(--r)':''}">${t?(due?`Due: last done ${age} days ago`:`Done ${age?age+' days ago':'today'}, next in ${left} days`):'Never done'}</span></span><button class="btn ${due?'':'ghost'} prb" data-act="prd" data-k="${k}">Done</button></div>`}).join('')}</section>`}
+function setCard(){return `<section class="card"><h2>Settings and backup</h2>
+<div class="num"><span><b>People in the household</b></span><div class="stp" style="width:150px"><button data-act="pp" data-d="-1" aria-label="Fewer people">−</button><span id="pv">${S.people}</span><button data-act="pp" data-d="1" aria-label="More people">+</button></div></div>
+<label class="chk" style="margin:12px 0 4px"><input type="checkbox" id="saver"${S.saver?' checked':''}> Battery saver: turn off animations</label>
+<h3 style="margin:16px 0 6px">Backup</h3><p class="sm dim">Everything lives on this phone only. Copy a backup and keep it in your notes or email, or paste one here to restore it on another phone.</p>
+<div class="lg"><button class="btn ghost" data-act="bkcopy">Copy backup</button><button class="btn ghost" data-act="bkfile">Save backup file</button></div>
+<label for="bkin">Restore from a backup</label><textarea id="bkin" rows="2" placeholder="Paste a backup here">${esc(bkRaw)}</textarea><button class="btn ghost wide" style="margin-top:8px" data-act="bkload">${bkArm?'Tap again to replace everything':'Restore backup'}</button>
+<button class="btn ghost wide" style="margin-top:16px;border-color:var(--r);color:var(--r)" data-act="wipe">${wipeArm?'Tap again to erase all data':'Erase all data'}</button>
+<p class="sm dim" style="margin:14px 0 0">Blackout Protocol is general safety information, not medical or professional advice. Always follow official instructions, and call 911 in an emergency.</p></section>`}
+let bkArm=false,wipeArm=false,bkRaw='';
+function rPrep(){
+  const p=pct(),d=nDone(),gaps=ALL.filter(x=>x.it[4]&&!S.done[x.id]);
+  const wd=S.water/(S.people*4),cov=Math.min(wd,S.food);
+  const bo=`<section class="card lockcta"><h2>Prep mode</h2><p class="dim">You're planning. When something happens, enter lockdown: the app starts the emergency clock, gives you a do-now list for the situation, and puts signals, timers and radio up front.</p><button class="btn red wide" data-act="lockopen">Enter lockdown</button></section>`;
+  const rd=`<section class="card"><h2>Readiness</h2><div class="gauge">${gauge(p)}<div class="dim">${d} of ${N} supplies secured</div></div><div class="bars">${catBars()}</div></section>`;
+  const gp=`<section class="card"><h2>Critical gaps</h2>${gaps.length?`<p class="sm dim">${gaps.length} critical items still missing. Tap one when you have it.</p>${gaps.map(x=>itemRow(x,1)).join('')}`:'<p>Every critical item is secured.</p>'}</section>`;
+  const sp=`<section class="card"><h2>Supplies</h2><div class="kpis"><div><span class="big2">${wd.toFixed(1)}</span><span class="dim">days of water</span></div><div><span class="big2">${S.food}</span><span class="dim">days of food</span></div><div><span class="big2">${cov.toFixed(1)}</span><span class="dim">days covered</span></div></div><p class="sm dim">${S.water} L of water for ${S.people} people. Change these in Tools.</p></section>`;
+  const tc=S.timers.length?`<section class="card"><h2>Timers</h2>${S.timers.map(t=>`<div class="num"><span><b>${esc(t.l)}</b><span class="nt" style="display:block">${t.done?'Finished':t.up!=null?'Counting up':t.run?'Ends '+clk(t.e):'Paused'}</span></span><span class="freq" id="tv_${t.id}">${tf(tVal(t))}</span></div>`).join('')}<button class="btn ghost wide" style="margin-top:10px" data-act="gotimers">Open timers</button></section>`:'';
+  const te=teCard();
+  return tc+rd+bo+gp+prCard()+sp+te+setCard();
+}
+
+const SCN={
+blackout:{n:'Blackout',g:'blackout',a:[
+['First hour',1,["Check if it's only your house: breaker panel, neighbours, Info-pannes app",'Report the outage: Hydro-Québec 1 800 790-2424','Keep the fridge and freezer closed','Unplug electronics, leave one lamp switched on','Fill the bathtub and spare jugs with water','Layer up and pick one room to keep warm','Phones on low-power mode, text instead of calling','Radio on for news','Check on neighbours, especially older people']],
+['First 6 hours',6,['Set up the warm room: cover windows, block drafts, bring in sleeping bags','Put a battery CO detector in the warm room before using any heater','Give everyone a headlamp; candles only as a last resort','Eat fridge food first and plan the day\'s meals','Move medicines that need cold into a cooler with ice packs','Charge phones one at a time from the car or power banks','Count what you have in the Inventory tab','Set up the backup toilet if water pressure drops']],
+['First 24 hours',24,['Check the fridge: throw out food past its safe window','Decide: stay, or go to family or a warming centre','House nearing freezing? Shut the water main and drain the pipes','Recount water and food, adjust rations','Check on neighbours again','Generator: outdoors, 6 m away, refuel only when cool','Keep a routine: meals, sleep, radio checks on the hour','Log anything unusual: symptoms, damage, calls']]]},
+winter:{n:'Winter storm',g:'winter',a:[
+['First hour',1,['Stay inside, away from trees and power lines','Downed lines: stay 10 m back, call 911 and Hydro-Québec','Clear snow from furnace, dryer and gas vents','Charge phones and power banks now','Fill water jugs and the bathtub','Bring pets inside','Radio on for road and weather updates']],
+['First 6 hours',6,['Set up the warm room and check CO detectors','Clear exits and the area around the gas meter','Keep the car at half a tank or more, kit inside it','Count what you have in the Inventory tab','Eat a hot meal, drink warm fluids']],
+['First 24 hours',24,['Shovel in short sessions with breaks','Check ceilings and the roof edge for leaks or sagging','Recount supplies and adjust rations','Check on neighbours','Decide whether to stay or relocate before night']]]},
+nuclear:{n:'Nuclear alert',g:'nuclear',a:[
+['First hour',1,['Get inside a sturdy building now','Go to the basement or the middle of the building','Close windows and doors, turn off fans and the air exchanger','Were you outside? Remove outer clothing and bag it','Shower with soap and shampoo, no conditioner','Radio on: follow official instructions','Stay inside at least 24 hours (timer started)','Only take KI pills if public health tells you to']],
+['First 6 hours',6,['Stay in the shelter spot, keep the radio on','Keep bagged clothing away from people and pets','Eat and drink only sealed food and water','Wipe down pets that were outside','Log any symptoms with times: nausea, vomiting, headache','Keep everyone calm: routine, cards, rest in turns']],
+['First 24 hours',24,["Don't go outside unless officials say it's safe",'Use sealed bottled water first','Count what you have in the Inventory tab','Get ready to move if told: masks, covered skin, go-bag by the door','Write down official instructions with the time']]]},
+cyber:{n:'Cyber attack / war',g:'cyber',a:[
+['First hour',1,['Get cash while ATMs still work','Fill the car and gas cans while pumps work','Fill water jugs: water pressure may drop','Charge every phone, power bank and radio','Write down key contacts on paper','Radio on: official sources only','Ignore texts and calls asking for personal or bank info','Agree on check-in times and a meeting spot with family']],
+['First 6 hours',6,['Fill the bathtub','Set up light and a warm room in case the power fails','Unplug sensitive electronics','Refill prescriptions if pharmacies are open','Count what you have in the Inventory tab','Check on neighbours and agree to share news']],
+['First 24 hours',24,['Recount cash, fuel, food and water','Keep doors locked and a low profile online','Check news on a schedule, not constantly','Write down official instructions with the time','Stick to check-in times with family']]]},
+other:{n:'Flood, heat or quake',g:'other',a:[
+['First hour',1,['Radio on for official instructions','Go-bag ready by the door','Flooding: move supplies and valuables upstairs','Told to shelter in place? Close windows, turn off ventilation','After a quake: check for gas smell, fire and injuries','Check on neighbours']],
+['First 6 hours',6,['Fill water containers and charge everything','Flooding: move the car to higher ground','Keep kids and pets close','Count what you have in the Inventory tab','Decide your evacuation route and meeting spot']],
+['First 24 hours',24,['Follow any boil-water advisory','Never walk or drive through floodwater','Recount supplies and adjust rations','Photograph damage for insurance','Check on neighbours again']]]}};
+const SCK=Object.keys(SCN);
+function fwLive(){
+  const e=Date.now()-S.bo,eh=e/36e5;
+  const food=[['Fridge, door closed',4],['Half-full freezer',24],['Full freezer',48]].map(([n,h])=>{const r=eh/h,col=r<.75?'var(--g)':r<1?'var(--y)':'var(--r)',txt=r<.75?hrs(h-eh)+' left':r<1?hrs(h-eh)+' left. Check the temperature':'Past the limit. If in doubt, throw it out';return `<div><div class="fr"><b>${n}</b><span>${txt}</span></div><span class="trk"><i style="width:${Math.min(r,1)*100}%;background:${col}"></i></span></div>`}).join('');
+  const daily=S.people*4,left=Math.max(S.water-daily*e/864e5,0);
+  return `<div class="fc">${food}</div><h3>Water left</h3><div class="wl"><span class="big2">${Math.round(left)} L</span><span class="dim">${(left/daily).toFixed(1)} days for ${S.people} at 4 L each a day</span></div>`;
+}
+const QA=[['light','sos','SOS light','red'],['light','white','Flashlight',''],['siren','','Siren',''],['light','red','Red light',''],['golog','','Log a note',''],['gotimers','','Timers',''],['gomorse','','Morse',''],['goradio','','Radio stations','']];
+const actsAll=sc=>sc.a.flatMap(([n,h,l],p)=>l.map((x,i)=>p+'-'+i));
+function phaseHead(p,h,l){const due=S.bo+h*36e5,dn=l.filter((x,i)=>S.acts[p+'-'+i]).length,left=due-Date.now(),od=left<0&&dn<l.length;return `<div class="ph${od?' od':''}" id="ph_${p}"><span>${dn}/${l.length}</span><span>${od?'Overdue':'By '+esc(hmT(due))}</span></div>`}
+function rNow(){
+  const sc=SCN[S.scen]||SCN.blackout,all=actsAll(sc),dn=all.filter(k=>S.acts[k]).length,pc=dn/all.length*100;
+  const eh=(Date.now()-S.bo)/36e5,cur=sc.a.findIndex(([n,h])=>eh<h);
+  const gaps=ALL.filter(x=>x.it[4]&&!S.done[x.id]),lows=ALL.filter(x=>S.done[x.id]&&S.low[x.id]);
+  const hero=`<section class="card alarm"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Lockdown</h2><span class="pill">${sc.n}</span></div><div class="clock" id="clk">T+ ${dur(Date.now()-S.bo)}</div><div class="sm dim">Since ${esc(clk(S.bo))}</div><details class="sm" style="margin-top:10px"><summary>Started earlier? Set the real time</summary><input type="datetime-local" id="bos" value="${loc(S.bo)}" style="margin-top:8px"></details><button class="btn ghost wide" style="margin-top:14px" data-act="bo-end">${endArm?'Tap again to end lockdown':'All clear. End lockdown'}</button></section>`;
+  const todo=`<section class="card"><h2>First 24 hours</h2><span class="trk"><i id="actbar" style="width:${pc}%;background:var(--g)"></i></span><p class="sm dim" id="actn" style="margin:8px 0 4px">${dn} of ${all.length} done${cur>=0?` · now in: ${sc.a[cur][0].toLowerCase()}`:''}</p>${sc.a.map(([n,h,l],p)=>`<div class="phase${p===cur?' now':''}"><div class="phh"><h3>${n}</h3>${phaseHead(p,h,l)}</div>${l.map((a,i)=>{const k=p+'-'+i;return `<button class="li${S.acts[k]?' on':''}" data-act="act" data-k="${k}" aria-pressed="${!!S.acts[k]}"><span class="box" aria-hidden="true"></span><span class="tx"><span class="nm"><span>${esc(a)}</span></span></span></button>`}).join('')}</div>`).join('')}<button class="btn ghost wide" style="margin-top:12px" data-act="goguide">Open the ${sc.n.toLowerCase()} guide</button></section>`;
+  const qa=`<section class="card"><h2>Quick actions</h2><div class="lg">${QA.map(([a,m,l,c])=>`<button class="btn ${c||'ghost'}" data-act="${a}"${m?` data-m="${m}"`:''}>${l}</button>`).join('')}</div></section>`;
+  const fw=`<section class="card"><h2>Food and water</h2><div id="fw">${fwLive()}</div></section>`;
+  const tc=S.timers.length?`<section class="card"><h2>Timers</h2>${S.timers.map(t=>`<div class="num"><span><b>${esc(t.l)}</b><span class="nt" style="display:block">${t.done?'Finished':t.up!=null?'Counting up':t.run?'Ends '+clk(t.e):'Paused'}</span></span><span class="freq" id="tv_${t.id}">${tf(tVal(t))}</span></div>`).join('')}<button class="btn ghost wide" style="margin-top:10px" data-act="gotimers">Open timers</button></section>`:'';
+  const al=(gaps.length||lows.length)?`<section class="card"><h2>Supply alerts</h2>${lows.map(x=>`<div class="num"><span><b>${esc(x.it[0])}</b></span><span class="q st${S.low[x.id]}">${S.low[x.id]>1?'Out':'Low'}</span></div>`).join('')}${gaps.length?`<p class="sm dim" style="margin:10px 0 6px">Critical gear you don't have:</p><p class="sm" style="margin:0">${gaps.map(x=>esc(x.it[0])).join(' · ')}</p>`:''}<button class="btn ghost wide" style="margin-top:12px" data-act="tab" data-t="kit">Open inventory</button></section>`:'';
+  const lg=`<section class="card"><h2>Log</h2>${S.log.slice(0,4).map(e=>`<div class="fr" style="margin-top:6px"><span>${esc(e.x)}</span><span>${e.t>=S.bo-1000?tplus(e.t):''}</span></div>`).join('')||'<p class="dim">Nothing yet.</p>'}<button class="btn ghost wide" style="margin-top:10px" data-act="golog">Open the log</button></section>`;
+  return hero+todo+qa+tc+fw+al+lg+teCard()+setCard();
+}
+const teCard=()=>`<section class="card"><h2>Test mode</h2><p class="dim">Practise a full emergency: enter lockdown, check off steps, count supplies, run timers, log things. When you end the test, everything goes back to exactly how it is now.</p><button class="btn ghost wide" data-act="${S.test?'testend':'teststart'}">${S.test?'End test and restore':'Start a test'}</button></section>`;
+function qParse(q){const m=String(q).match(/^(\d+(?:\.\d+)?)\s*(?:[–-]\s*\d+(?:\.\d+)?)?\+?\s*(.*)$/);return m?{n:+m[1],u:m[2].trim()}:null}
+const invOf=x=>{const p=qParse(x.it[1]);if(!p)return null;return{n:S.inv[x.id]!=null?S.inv[x.id]:p.n,u:p.u,start:p.n}};
+function invRow(x,c){
+  const own=!!S.done[x.id],st=own?(S.low[x.id]||0):3,iv=own?invOf(x):null;
+  return `<div class="sup${own?'':' miss'}"><div class="supt"><span class="dot" style="background:${c.c};margin-top:7px"></span><span class="tx"><span class="nm"><span>${esc(x.it[0])}</span></span>${x.it[2]?`<span class="nt">${esc(x.it[2])}</span>`:''}</span><button class="q st${st}" data-act="${own?'low':'tog'}" data-id="${x.id}" id="st_${x.id}">${['OK','Low','Out','Not in kit'][st]}</button></div>${iv?`<div class="ivr"><div class="stp"><button data-act="inv" data-id="${x.id}" data-d="-1" aria-label="Use one">−</button><input type="number" inputmode="decimal" min="0" data-inv="${x.id}" value="${iv.n}" aria-label="${esc(x.it[0])} on hand"><button data-act="inv" data-id="${x.id}" data-d="1" aria-label="Add one">+</button></div><span class="nt">${esc(iv.u||'on hand')}${iv.n!==iv.start?` · started with ${iv.start}`:''}</span></div>`:''}</div>`;
+}
+function supList(){
+  return C.map((c,ci)=>{const its=ALL.filter(x=>x.ci===ci),have=its.filter(x=>S.done[x.id]),miss=its.length-have.length;
+    const rows=(S.supAll?its:have).map(x=>invRow(x,c)).join('');
+    if(!rows)return '';
+    return `<section class="card"><div class="ch" style="cursor:default"><span class="dot" style="background:${c.c}"></span><h3>${c.n}</h3><span class="cn">${have.length} on hand${miss&&!S.supAll?` · ${miss} missing`:''}</span></div>${rows}</section>`}).join('')||'<p class="dim">Nothing in your kit yet. Switch to Everything to mark what you have.</p>';
+}
+const invSum=()=>{const have=ALL.filter(x=>S.done[x.id]),lo=have.filter(x=>S.low[x.id]===1).length,out=have.filter(x=>S.low[x.id]===2).length;return `<div class="kpis"><div><span class="big2">${have.length}</span><span class="dim">items on hand</span></div><div><span class="big2" style="color:var(--y)">${lo}</span><span class="dim">running low</span></div><div><span class="big2" style="color:var(--r)">${out}</span><span class="dim">out</span></div></div>`};
+const rSup=()=>`<section class="card"><h2>Inventory</h2><div id="isum">${invSum()}</div><p class="sm dim" style="margin:0 0 12px">Use − and + as you use things up, or type the exact amount. Tap the tag to mark an item low or out. Every change is logged. Water you count here also updates the water-left estimate.</p><div class="seg" role="group"><button data-act="supall" data-v="0" aria-pressed="${!S.supAll}">On hand</button><button data-act="supall" data-v="1" aria-pressed="${!!S.supAll}">Everything</button></div></section><div id="kl">${supList()}</div>`;
+function invSet(id,n){
+  const x=ALL.find(z=>z.id===id);if(!x)return;const iv=invOf(x);if(!iv)return;n=Math.max(0,Math.round(n*100)/100);const old=iv.n;if(n===old)return;
+  S.inv[id]=n;if(n<=0)S.low[id]=2;else if(S.low[id]===2)delete S.low[id];
+  if(id==='0-0')S.water=n;
+  const msg=`Inventory: ${x.it[0]} ${n} ${iv.u}`.trim(),top=S.log[0];
+  if(top&&top.inv===id&&Date.now()-top.t<20000){top.x=msg;top.t=Date.now()}else{logAdd(msg);S.log[0].inv=id}
+  save();const st=$('st_'+id);if(st){const v=S.low[id]||0;st.className='q st'+v;st.textContent=['OK','Low','Out'][v]}const sm=$('isum');if(sm)sm.innerHTML=invSum();
+}
+function openSheet(){const sh=$('sheet');if(!sh)return;sh.hidden=false}
+const rStatus=()=>S.mode==='lock'&&S.bo?rNow():rPrep();
+
+function kitList(){
+  const q=S.q.trim().toLowerCase();
+  const h=C.map((c,ci)=>{
+    const its=ALL.filter(x=>x.ci===ci),d=its.filter(x=>S.done[x.id]).length;
+    const sh=its.filter(x=>(!q||(x.it[0]+' '+x.it[2]).toLowerCase().includes(q))&&(S.filter==='all'||!S.done[x.id]));
+    if(q&&!sh.length)return '';
+    const op=!!(q||S.open[ci]);
+    return `<section class="card${op?' open':''}"><button class="ch" data-act="cat" data-c="${ci}" aria-expanded="${op}"><span class="dot" style="background:${c.c}"></span><h3>${c.n}</h3><span class="cn">${d}/${its.length}</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button><span class="trk thin"><i style="width:${d/its.length*100}%;background:${c.c}"></i></span>${op?(sh.length?`<div style="margin-top:8px">${sh.map(x=>itemRow(x)).join('')}</div>`:'<p class="sm dim" style="margin:12px 0 0">Everything here is secured.</p>'):''}</section>`;
+  }).join('');
+  return h||'<p class="dim">No supplies match that search.</p>';
+}
+const rKit=()=>`<div class="kc"><input type="search" id="ks" placeholder="Search supplies" aria-label="Search supplies" value="${esc(S.q)}"><div class="seg" role="group" aria-label="Show"><button data-act="flt" data-f="all" aria-pressed="${S.filter==='all'}">All</button><button data-act="flt" data-f="miss" aria-pressed="${S.filter==='miss'}">Missing</button></div></div><div id="kl">${kitList()}</div><section class="card"><h2>Add your own gear</h2><label for="ag_n">Item</label><input type="text" id="ag_n" placeholder="e.g. Ham radio, spare propane hose"><div class="cg2"><div><label for="ag_q">Quantity</label><input type="text" id="ag_q" placeholder="e.g. 2"></div><div><label for="ag_c">Category</label><select id="ag_c">${C.map((c,i)=>`<option value="${i}">${c.n}</option>`).join('')}</select></div></div><label for="ag_t">Note (optional)</label><input type="text" id="ag_t" placeholder="Where it is, size, expiry…"><label class="chk"><input type="checkbox" id="ag_k"> Mark as critical</label><button class="btn wide" data-act="addgear">Add to kit</button></section><button class="btn ghost wide" data-act="reset">${resetArm?`Tap again to uncheck all ${N}`:'Uncheck everything'}</button>`;
+
+const strip=h=>h.replace(/<[^>]+>/g,' ');
+const accCard=(g,key,tag)=>{const o=!!S.go[key];return `<section class="card acc${o?' open':''}"><button class="ch" data-act="g" data-k="${key}" aria-expanded="${o}"><span>${tag?`<span class="tag">${tag}</span>`:''}<h3>${g.t}</h3><span class="sm dim">${g.k}</span></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>${o?`<div class="gb">${g.b}</div>`:''}</section>`};
+function guideList(){
+  const q=S.gq.trim().toLowerCase();
+  if(q){const r=[];GT.forEach(([k,l])=>G[k].forEach((g,i)=>{if((g.t+' '+g.k+' '+strip(g.b)).toLowerCase().includes(q))r.push(accCard(g,k+i,l))}));return r.length?`<p class="sm dim">${r.length} topic${r.length>1?'s':''} found</p>`+r.join(''):'<p class="dim">Nothing matches that search.</p>'}
+  return `<div class="chips" role="group" aria-label="Scenario">${GT.map(([k,l])=>`<button data-act="gs" data-s="${k}" aria-pressed="${S.gs===k}">${l}</button>`).join('')}</div>`+G[S.gs].map((g,i)=>accCard(g,S.gs+i)).join('');
+}
+const rGuide=()=>`<input type="search" id="gq" placeholder="Search the whole guide" aria-label="Search the guide" value="${esc(S.gq)}" style="margin-bottom:12px"><div id="gl">${guideList()}</div><p class="sm dim foot">General information, not medical or professional advice. Always follow local authorities first, and call 911 in an emergency.</p>`;
+
+function tr(s){
+  const t=(s||'').trim();
+  if(!t)return{dir:'Waiting for input',out:'',morse:''};
+  if(/^[.\-·•–—_−\s\/]+$/.test(t)){const n=t.replace(/[·•]/g,'.').replace(/[–—_−]/g,'-');const out=n.split(/\s*\/\s*|\s{3,}/).map(w=>w.trim().split(/\s+/).filter(Boolean).map(c=>R[c]||'?').join('')).join(' ');return{dir:'Morse → text',out,morse:n}}
+  const morse=t.toUpperCase().split(/\s+/).map(w=>[...w].map(ch=>M[ch]).filter(Boolean).join(' ')).filter(Boolean).join(' / ');
+  return{dir:'Text → Morse',out:morse,morse};
+}
+const mOut=()=>{const r=tr(S.mo);return `<div class="mdir">${r.dir}</div><div class="mres">${esc(r.out)||'—'}</div>`};
+function seqOf(m){const q=[],ws=m.trim().split(/\s*\/\s*/);ws.forEach((w,wi)=>{const ls=w.trim().split(/\s+/).map(l=>l.replace(/[^.\-]/g,'')).filter(Boolean);ls.forEach((l,li)=>{[...l].forEach((s,si)=>{q.push([1,s==='-'?3:1]);if(si<l.length-1)q.push([0,1])});if(li<ls.length-1)q.push([0,3])});if(wi<ws.length-1)q.push([0,7])});q.push([0,7]);return q}
+
+function calc(){
+  const daily=S.people*4,wd=S.water/daily,dr=S.water/(S.people*2),cov=Math.min(wd,S.food);
+  const lim=wd<S.food?'Water runs out first.':S.food<wd?'Food runs out first.':'Water and food run out together.';
+  return `<div class="kpis" style="margin-top:16px"><div><span class="big2">${wd.toFixed(1)}</span><span class="dim">days of water at 4 L each</span></div><div><span class="big2">${dr.toFixed(1)}</span><span class="dim">days at 2 L each, drinking only</span></div><div><span class="big2">${cov.toFixed(1)}</span><span class="dim">days fully covered</span></div></div><p class="sm dim">${S.people} people need ${daily} L of water a day. ${lim}</p>`;
+}
+const TT=[['timers','Timers'],['morse','Morse'],['signal','Signals'],['calc','Calculators'],['nav','Compass & sun'],['log','Log']];
+const TP=[
+['Water',[['Boil water',60],['Bleach, clear water',1800],['Bleach recheck',900],['Bleach, cloudy or cold',7200]]],
+['Food',[['Pot cozy rice or pasta',1200],['Fridge food safe',14400],['Half-full freezer',86400],['Full freezer',172800]]],
+['First aid',[['CPR: swap every 2 min',120,1],['Cool a burn',600],['Ice a sprain',1200],['EpiPen 2nd dose check',300],['Tourniquet on','up']]],
+['Heat & car',[['Car engine run',600],['Car engine every 30 min',1800,1],['Heater and CO check',3600,1]]],
+['Shelter & comms',[['Fallout shelter',86400],['Radio news check',3600,1],['Walkie check-in',1800,1]]]];
+const clk=ts=>new Date(ts).toLocaleString([],{weekday:'short',hour:'2-digit',minute:'2-digit'});
+function tf(s){s=Math.max(0,Math.ceil(s));const d=Math.floor(s/86400),h=Math.floor(s%86400/3600);return (d?d+'d ':'')+((d||h)?pad(h)+':':'')+pad(Math.floor(s%3600/60))+':'+pad(s%60)}
+const tVal=t=>t.up!=null?(t.acc+(t.run?Date.now()-t.up:0))/1000:(t.done?0:t.run?Math.max(0,(t.e-Date.now())/1000):t.rem/1000);
+const tid=()=>'t'+Date.now()+Math.floor(Math.random()*1e4);
+function addT(l,s,r){actx();logAdd('Timer started: '+l+' ('+tf(s)+')');S.timers.unshift({id:tid(),l,d:s,e:Date.now()+s*1000,run:true,rem:0,r:!!r,done:false});S.timers.length=Math.min(S.timers.length,20);save();tRefresh();toast('Timer started: '+l)}
+function addUp(l){const n=Date.now();S.timers.unshift({id:tid(),l,up:n,st:n,acc:0,run:true});S.timers.length=Math.min(S.timers.length,20);logAdd(l);save();tRefresh();toast('Stopwatch started: '+l)}
+function timerRow(t){
+  const up=t.up!=null,v=tVal(t),pc=up?0:Math.min(100,(1-v/t.d)*100);
+  const foot=up?`Started ${clk(t.st)}`:t.done?'Finished':!t.run?'Paused':`Ends ${clk(t.e)}`;
+  const btns=t.done?`<button class="btn" data-act="tdone" data-id="${t.id}">Dismiss</button><button class="btn ghost" data-act="tagain" data-id="${t.id}">Restart</button>`
+   :`<button class="btn ghost" data-act="tpause" data-id="${t.id}">${t.run?'Pause':'Resume'}</button>${up?'':`<button class="btn ghost" data-act="tplus" data-id="${t.id}">+5 min</button>`}<button class="btn ghost" data-act="tdel" data-id="${t.id}" aria-label="Remove timer">✕</button>`;
+  return `<div class="trow${t.done?' done':''}"><div class="th"><b>${esc(t.l)}</b>${t.r?'<span class="tag">Repeats</span>':''}${up?'<span class="tag">Counting up</span>':''}</div><div class="tv" id="tv_${t.id}">${tf(v)}</div>${up?'':`<span class="trk"><i id="tbar_${t.id}" style="width:${pc}%;background:${t.done?'var(--r)':'var(--y)'}"></i></span>`}<div class="nt" style="margin:6px 0 10px">${foot}</div><div class="tbtn">${btns}</div></div>`;
+}
+const tList=()=>S.timers.length?S.timers.map(timerRow).join(''):'<p class="dim">No timers running. Pick a preset or make your own below.</p>';
+function tRefresh(){const el=$('tlist');if(el)el.innerHTML=tList()}
+function alarm(t){if(actx()){const t0=ac.currentTime+.05;for(let k=0;k<6;k++)tone(t0+k*.35,.22,k%2?660:990)}try{if(navigator.vibrate)navigator.vibrate([400,200,400,200,400])}catch(e){}toast("Time's up: "+t.l);logAdd('Timer done: '+t.l)}
+function tTick(){
+  const now=Date.now();let ch=false;
+  S.timers.forEach(t=>{if(t.up==null&&t.run&&!t.done&&now>=t.e){alarm(t);if(t.r){while(t.e<=now)t.e+=t.d*1000}else{t.done=true;t.run=false;t.rem=0}ch=true}});
+  if(ch){save();tRefresh();if(tab==='status')render()}
+  S.timers.forEach(t=>{const v=$('tv_'+t.id);if(v)v.textContent=tf(tVal(t));const b=$('tbar_'+t.id);if(b&&t.up==null)b.style.width=Math.min(100,(1-tVal(t)/t.d)*100)+'%'});
+}
+const tById=id=>S.timers.find(t=>t.id===id);
+const rTimers=()=>`<section class="card"><h2>Running</h2><div id="tlist">${tList()}</div></section>
+<section class="card"><h2>Presets</h2>${TP.map(([g,a],gi)=>`<h3 style="margin:14px 0 8px">${g}</h3><div class="lg">${a.map(([l,s,r],i)=>`<button class="btn ghost pre" data-act="tpre" data-g="${gi}" data-i="${i}"><span>${l}</span><small>${s==='up'?'Counts up':tf(s)+(r?' · repeats':'')}</small></button>`).join('')}</div>`).join('')}<p class="sm dim" style="margin:12px 0 0">Timers keep running if you close the app. Alarms only sound while it's open.</p></section>
+<section class="card"><h2>Custom timer</h2><label for="ctl">Name</label><input type="text" id="ctl" placeholder="e.g. Check on neighbour"><div class="cg" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><label for="cth">Hours</label><input type="number" inputmode="numeric" min="0" id="cth" value="0"></div><div><label for="ctm">Minutes</label><input type="number" inputmode="numeric" min="0" id="ctm" value="15"></div></div><label class="chk"><input type="checkbox" id="ctr"> Repeat when it ends</label><div class="lg"><button class="btn" data-act="tcustom">Start timer</button><button class="btn ghost" data-act="tcustomup">Start stopwatch</button></div></section>`;
+
+const rMorse=()=>`<section class="card"><h2>Morse translator</h2><label for="mi">Type text or Morse</label><textarea id="mi" rows="3" spellcheck="false" autocapitalize="characters">${esc(S.mo)}</textarea><div id="mo">${mOut()}</div><div class="lg"><button class="btn" data-act="mplay" data-w="light">Flash it</button><button class="btn ghost" data-act="mplay" data-w="sound">Beep it</button></div><button class="btn ghost wide" style="margin-top:10px" data-act="mcopy">Copy result</button><p class="sm dim" style="margin:10px 0 0">Morse input: dots and dashes, a space between letters and / between words.</p></section>
+<section class="card" id="mic"><h2>Morse listener</h2><p class="sm dim">Set the phone near the beeps and it decodes them as they come in. Works best with one clear tone and little background noise. It stops when you leave this screen.</p><button class="btn${mic.on?' red':''} wide" data-act="mic" id="mbtn">${mic.on?'Stop listening':'Start listening'}</button><div class="meter" aria-hidden="true"><i id="mlv"></i><b id="mth"></b></div><label for="msens">Sensitivity</label><input type="range" id="msens" min="6" max="30" step="1" value="${36-mic.sens}"><div class="mdir">Decoded text</div><div class="mres" id="mtx">${esc(dec.text)||'—'}</div><div class="sm dim mraw" id="mraw">${esc(dec.raw+dec.cur)}</div><div class="lg"><button class="btn ghost" data-act="mclr">Clear</button><button class="btn ghost" data-act="mcp">Copy text</button></div><p class="sm" id="mmsg" style="margin:10px 0 0;color:var(--y)">${esc(mic.msg)}</p></section>
+<section class="card"><h2>Morse chart</h2><p class="sm dim">SOS is ··· ––– ···. Three of anything (flashes, blasts, knocks) also means help.</p><div class="mchart">${Object.entries(M).filter(([k])=>/^[A-Z0-9]$/.test(k)).map(([k,v])=>`<div class="mc${k==='S'||k==='O'?' sos':''}"><b>${k}</b><span>${v.replace(/\./g,'·').replace(/-/g,'–')}</span></div>`).join('')}</div></section>`;
+
+let siren=null;
+function sirenToggle(){
+  if(siren){try{siren.o.stop();siren.l.stop()}catch(e){}siren=null;return}
+  if(!actx()){toast('Sound is not available here');return}
+  const o=ac.createOscillator(),l=ac.createOscillator(),lg=ac.createGain(),g=ac.createGain();o.type='square';o.frequency.value=1000;l.frequency.value=.5;lg.gain.value=400;g.gain.value=.35;l.connect(lg);lg.connect(o.frequency);o.connect(g);g.connect(ac.destination);o.start();l.start();siren={o,l};
+}
+const rSignal=()=>`<section class="card"><h2>Signal light</h2><p class="sm dim">Turns the whole screen into a light. Tap the screen to stop. Turn brightness all the way up.</p><div class="lg"><button class="btn" data-act="light" data-m="white">Flashlight</button><button class="btn red" data-act="light" data-m="sos">SOS signal</button><button class="btn ghost" data-act="light" data-m="strobe">Strobe</button><button class="btn ghost" data-act="light" data-m="red">Red night light</button></div></section>
+<section class="card"><h2>Sound signals</h2><p class="sm dim">Turn the volume all the way up. Three blasts is the standard call for help.</p><div class="lg"><button class="btn red" data-act="siren" id="sirb">${siren?'Stop siren':'Siren'}</button><button class="btn ghost" data-act="blasts">3 whistle blasts</button><button class="btn ghost" data-act="sosb">SOS beeps</button></div></section>`;
+
+const CVD={wl:20,wcl:'clear',t:-15,v:30,btu:9000,c1:4,c20:1,bank:20000,ph:4500,fuel:10,burn:1,km:10,pace:5};
+const cvF=(k,l)=>`<div><label for="cv_${k}">${l}</label><input type="number" inputmode="${k==='t'?'text':'decimal'}"${k==='t'?'':' min="0"'} id="cv_${k}" data-c="${k}" value="${S.cv[k]}"></div>`;
+const cvSeg=(k,opts)=>`<div class="seg" role="group" style="margin-top:12px">${opts.map(([v,l])=>`<button data-act="cvset" data-k="${k}" data-v="${v}" aria-pressed="${String(S.cv[k])===String(v)}">${l}</button>`).join('')}</div>`;
+const hm=h=>{const m=Math.round(h*60);return m>=1440?(h/24).toFixed(1)+' days':Math.floor(m/60)+' h '+pad(m%60)+' min'};
+function calcOut(){
+  const c=S.cv,set=(id,h)=>{const el=$(id);if(el)el.innerHTML=h};
+  const cl=c.wcl==='cloudy',dr=Math.round(c.wl*(cl?4:2)),ml=dr*.05;
+  set('co_w',`<span class="big2">${dr} drops</span><span class="dim">about ${ml.toFixed(1)} mL of bleach. Wait ${cl?'1 to 2 hours':'30 minutes'}, then check for a slight chlorine smell.</span>`);
+  let w;if(c.t>10||c.v<5)w='<span class="dim">Wind chill only applies at 10°C or colder, with wind of 5 km/h or more.</span>';
+  else{const x=Math.round(13.12+.6215*c.t-11.37*c.v**.16+.3965*c.t*c.v**.16),r=x<=-55?'Extreme. Exposed skin can freeze in under 2 minutes.':x<=-48?'Severe. Skin can freeze in 2 to 5 minutes.':x<=-40?'Very high. Skin can freeze in 5 to 10 minutes.':x<=-28?'High. Skin can freeze in 10 to 30 minutes.':x<=-10?'Moderate. Cover up; hypothermia risk if outside long.':'Low.';w=`<span class="big2">${x}</span><span class="dim">feels like ${x}°C. ${r}</span>`}
+  set('co_wc',w);
+  const ph=(c.c1*21600+c.c20*20*21600)/Math.max(c.btu,1);
+  set('co_p',`<span class="big2">${hm(ph)}</span><span class="dim">of heat at ${c.btu} BTU/h. That's ${(ph/8).toFixed(1)} nights at 8 h each.</span>`);
+  set('co_b',`<span class="big2">${(c.bank*.65/Math.max(c.ph,1)).toFixed(1)}</span><span class="dim">full phone charges (about 65% of the rated capacity reaches the phone)</span>`);
+  set('co_g',`<span class="big2">${hm(c.fuel/Math.max(c.burn,.01))}</span><span class="dim">of run time</span>`);
+  set('co_k',`<span class="big2">${hm(c.km/Math.max(c.pace,.1))}</span><span class="dim">at ${c.pace} km/h, without breaks</span>`);
+}
+const ccard=(h,body,id,note)=>`<section class="card"><h2>${h}</h2>${body}<div class="co" id="${id}"></div>${note?`<p class="sm dim" style="margin:8px 0 0">${note}</p>`:''}</section>`;
+const rCalc=()=>`<section class="card"><h2>Ration calculator</h2><div class="cg"><div><label>People</label><div class="stp"><button data-act="pp" data-d="-1" aria-label="Fewer people">−</button><span id="pv">${S.people}</span><button data-act="pp" data-d="1" aria-label="More people">+</button></div></div><div><label for="tw">Water stored (L)</label><input type="number" inputmode="decimal" min="0" id="tw" data-n="water" value="${S.water}"></div><div><label for="tf">Food on hand (days)</label><input type="number" inputmode="decimal" min="0" id="tf" data-n="food" value="${S.food}"></div></div><div id="rc">${calc()}</div></section>`
+ +ccard('Water treatment',`<div class="cg2">${cvF('wl','Water to treat (L)')}</div>${cvSeg('wcl',[['clear','Clear'],['cloudy','Cloudy or cold']])}`,'co_w','Unscented household bleach, about 5.25%. 1 drop is about 0.05 mL.')
+ +ccard('Wind chill',`<div class="cg2">${cvF('t','Air temp (°C)')}${cvF('v','Wind (km/h)')}</div>`,'co_wc','Uses Environment Canada\'s wind chill formula.')
+ +ccard('Propane heater',`<div class="cg">${cvF('btu','Heater BTU/h')}${cvF('c1','1 lb cylinders')}${cvF('c20','20 lb tanks')}</div>`,'co_p','About 21,600 BTU per pound of propane. Check your heater\'s label for its BTU/h. Cylinders give less in deep cold.')
+ +ccard('Power bank',`<div class="cg2">${cvF('bank','Power bank (mAh)')}${cvF('ph','Phone battery (mAh)')}</div>`,'co_b','')
+ +ccard('Generator fuel',`<div class="cg2">${cvF('fuel','Fuel on hand (L)')}${cvF('burn','Burn rate (L/h)')}</div>`,'co_g','The burn rate is in the manual; it goes up with load.')
+ +ccard('Walking time',`<div class="cg2">${cvF('km','Distance (km)')}</div>${cvSeg('pace',[['5','Road'],['4','With a pack'],['2.5','Deep snow']])}`,'co_k','Rough averages. Add breaks, and more time at night.');
+
+const LAT=45.75,LON=-73.6;
+function sunT(date){const rad=Math.PI/180,J=date.getTime()/864e5+2440587.5,n=Math.ceil(J-2451545+.0008),Js=n-LON/360,Mm=(357.5291+.98560028*Js)%360,Cc=1.9148*Math.sin(Mm*rad)+.02*Math.sin(2*Mm*rad)+.0003*Math.sin(3*Mm*rad),Lm=(Mm+Cc+282.9372)%360,Jt=2451545+Js+.0053*Math.sin(Mm*rad)-.0069*Math.sin(2*Lm*rad),dl=Math.asin(Math.sin(Lm*rad)*Math.sin(23.4397*rad)),cw=(Math.sin(-.833*rad)-Math.sin(LAT*rad)*Math.sin(dl))/(Math.cos(LAT*rad)*Math.cos(dl)),w=Math.acos(Math.max(-1,Math.min(1,cw)))/rad,ms=j=>(j-2440587.5)*864e5;return{rise:ms(Jt-w/360),set:ms(Jt+w/360),noon:ms(Jt)}}
+const hmT=ts=>new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+function sunCard(){
+  const now=new Date(),noon=new Date(now);noon.setHours(12,0,0,0);const a=sunT(noon),tm=new Date(noon.getTime()+864e5),b=sunT(tm);
+  const left=a.set-Date.now(),len=(a.set-a.rise)/36e5;
+  const st=Date.now()<a.rise?`Sunrise in ${hm((a.rise-Date.now())/36e5)}`:left>0?`${hm(left/36e5)} of daylight left`:'The sun has set';
+  return `<section class="card"><h2>Sun today</h2>${[['Sunrise',a.rise],['Sun due south',a.noon],['Sunset',a.set]].map(([l,t])=>`<div class="num"><span><b>${l}</b></span><span class="freq">${hmT(t)}</span></div>`).join('')}<p style="margin-top:10px"><b>${st}.</b> ${hm(len)} of daylight today. Tomorrow: ${hmT(b.rise)} to ${hmT(b.set)}.</p><p class="sm dim" style="margin:0">Calculated for Mascouche. Plan outdoor jobs, fuel runs and walks for daylight.</p></section>`;
+}
+let cmp={on:false,got:false,h:0};
+function onOri(e){let h=null;if(e.webkitCompassHeading!=null)h=e.webkitCompassHeading;else if(e.absolute&&e.alpha!=null)h=(360-e.alpha)%360;if(h==null)return;cmp.got=true;cmp.h=h;const r=$('rose');if(r)r.setAttribute('transform',`rotate(${-h})`);const d=$('hdg');if(d)d.textContent=Math.round(h)+'° '+['N','NE','E','SE','S','SW','W','NW'][Math.round(h/45)%8];const m=$('cmsg');if(m)m.textContent='Hold the phone flat. Shows magnetic north. Wave it in a figure 8 if it seems off.'}
+async function cmpStart(){
+  try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')throw 0}}catch(e){$('cmsg').textContent='Motion sensor permission was refused.';return}
+  if(!cmp.on){window.addEventListener('deviceorientationabsolute',onOri);window.addEventListener('deviceorientation',onOri);cmp.on=true}
+  $('cmsg').textContent='Looking for a compass reading…';
+  setTimeout(()=>{if(!cmp.got){const m=$('cmsg');if(m)m.textContent="No compass reading. Sensors are blocked in this view or missing on this phone. Try the offline app file in Chrome, or use the sun below."}},3000);
+}
+function roseSvg(){let t='';for(let a=0;a<360;a+=15){const r1=a%90?92:84,x1=Math.sin(a*Math.PI/180),y1=-Math.cos(a*Math.PI/180);t+=`<line x1="${(x1*r1).toFixed(1)}" y1="${(y1*r1).toFixed(1)}" x2="${(x1*100).toFixed(1)}" y2="${(y1*100).toFixed(1)}" stroke="${a%90?'#5a5850':'#ffd400'}" stroke-width="${a%90?2:4}"/>`}
+  const L=[['N',0,'#ff4136'],['E',90,'#f1efe6'],['S',180,'#f1efe6'],['W',270,'#f1efe6']].map(([l,a,c])=>`<text x="${(Math.sin(a*Math.PI/180)*66).toFixed(1)}" y="${(-Math.cos(a*Math.PI/180)*66+9).toFixed(1)}" text-anchor="middle" font-family="'Black Ops One',Impact,sans-serif" font-size="26" fill="${c}">${l}</text>`).join('');
+  return `<svg viewBox="-110 -118 220 228" class="cmpsvg" role="img" aria-label="Compass"><circle r="104" fill="#080807" stroke="#2e2d29" stroke-width="4"/><g id="rose" transform="rotate(${-cmp.h})">${t}${L}</g><path d="M0 -112 L9 -94 L-9 -94 Z" fill="#ffd400"/><circle r="5" fill="#ffd400"/></svg>`}
+const rNav=()=>`<section class="card"><h2>Compass</h2><div class="gauge">${roseSvg()}<div class="big2" id="hdg" style="margin-top:6px">${cmp.got?Math.round(cmp.h)+'°':'—'}</div></div><button class="btn wide" style="margin-top:12px" data-act="cmpstart">Start compass</button><p class="sm dim" id="cmsg" style="margin:10px 0 0">Uses the phone's compass sensor. Hold it flat.</p></section>${sunCard()}
+<section class="card"><h2>No compass?</h2><ul class="sm" style="padding-left:20px;margin:0"><li>The sun rises roughly east and sets roughly west. At the "sun due south" time above, it points south.</li><li>At night, the two stars at the end of the Big Dipper's cup point to the North Star.</li><li>Keep a paper map with your meeting spots marked.</li></ul></section>`;
+
+let logArm=false,logAll=false,nameEdit=false;
+const LC=[
+{k:'health',n:'Health & first aid',c:'#ff6b6b',i:['Meds taken','Symptoms:','Fever checked:','Vomiting or diarrhea','Headache or dizziness','Injury:','Pain:','Cold or shivering','Burn cooled','Bleeding controlled','Tourniquet on','Tourniquet off','CPR started','EpiPen used','Called 911','Called Info-Santé 811']},
+{k:'food',n:'Food & water',c:'#4aa8ff',i:['Drank water','Ate a meal','Snack','Water treated','Water boiled','Water refilled','Opened the fridge','Opened the freezer','Fridge temp:','Food thrown out:','Rations adjusted:']},
+{k:'heat',n:'Heat & safety',c:'#ff8a3d',i:['Heater on','Heater off','Fuel or cylinder changed','Window cracked for air','CO alarm went off','Smoke alarm went off','Smoke or fire','Gas smell','Indoor temp:','Fire extinguisher used']},
+{k:'power',n:'Power & devices',c:'#2fd4c4',i:['Power out','Power back','Power flicker','Generator on','Generator off','Generator refuelled','Phone charged','Power bank used','Batteries swapped','Breaker reset']},
+{k:'comms',n:'Comms & news',c:'#b98cff',i:['Radio update:','Official instruction:','Alert Ready alert:','Check-in done','Missed check-in:','Call made:','Text sent:','Neighbour checked on:','Message received:']},
+{k:'move',n:'Movement & security',c:'#c9c7bd',i:['Went outside','Came back inside','Left home:','Arrived at:','Doors locked','Visitor at the door:','Suspicious activity:','Car started or moved']},
+{k:'env',n:'Weather & outside',c:'#3ddc84',i:['Outside temp:','Snow or ice','Strong wind','Rain','Water rising:','Smoke outside','Road blocked:','Line or tree down:']},
+{k:'damage',n:'Damage & home',c:'#ffb020',i:['Damage found:','Pipe frozen or leaking','Water main shut off','Water main back on','Roof or ceiling leak','Photo taken for insurance','Repair done:']},
+{k:'morale',n:'People & morale',c:'#ff6fb5',i:['Everyone accounted for','Slept or rested','Kids OK','Pets fed and watered','Family meeting','Feeling anxious:','Game or downtime']}];
+const LCK=Object.fromEntries(LC.map(c=>[c.k,c]));
+const catOf=k=>LCK[k]||{n:'Auto',c:'#6d6a60'};
+const SINCE=[['Meds taken','Meds'],['Drank water','Water'],['Ate a meal','Meal'],['Radio update','Radio'],['Check-in done','Check-in'],['Phone charged','Phone charged']];
+const names=()=>String(S.names||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,8);
+function logAdd(x,k,c){S.log.unshift({t:Date.now(),x:String(x).slice(0,240),k:k||'',c:c||'sys'});if(S.log.length>500)S.log.length=500;save();const el=$('lgl');if(el){el.innerHTML=logList();const f=$('lfc');if(f)f.innerHTML=logFilters()}const sn=$('since');if(sn)sn.innerHTML=sinceList()}
+const tplus=t=>{const m=Math.max(0,Math.floor((t-S.bo)/6e4)),d=Math.floor(m/1440);return 'T+ '+(d?d+'d ':'')+Math.floor(m%1440/60)+'h '+pad(m%60)+'m'};
+const ago=t=>{const m=Math.floor((Date.now()-t)/6e4);return m<1?'just now':m<60?m+' min ago':Math.floor(m/60)+' h '+pad(m%60)+' ago'};
+const logShown=()=>S.log.map((e,i)=>[e,i]).filter(([e])=>(logAll||!S.bo||e.t>=S.bo-1000)&&(!S.lf||S.lf==='all'||(e.c||'sys')===S.lf));
+const logList=()=>{const L=logShown();return L.length?L.map(([e,i])=>{const c=catOf(e.c);return `<div class="le${e.k==='em'?' em':''}"><span class="lt">${S.bo&&e.t>=S.bo-1000?tplus(e.t)+'<br>':''}${esc(clk(e.t))}</span><span class="lx"><span class="ldot" style="background:${c.c}" title="${esc(c.n)}"></span>${esc(e.x)}</span><button class="lxb" data-act="ldel" data-i="${i}" aria-label="Delete entry">✕</button></div>`}).join(''):'<p class="dim">Nothing logged here yet.</p>'};
+const logFilters=()=>{const used=new Set(S.log.map(e=>e.c||'sys'));const opts=[['all','All']].concat(LC.filter(c=>used.has(c.k)).map(c=>[c.k,c.n]));if(used.has('sys'))opts.push(['sys','Auto']);return opts.map(([k,l])=>`<button data-act="lf" data-s="${k}" aria-pressed="${(S.lf||'all')===k}">${l}</button>`).join('')};
+const sinceList=()=>SINCE.map(([p,l])=>{const e=S.log.find(z=>z.x.startsWith(p));return `<div class="sn"><span class="dim">${l}</span><b>${e?ago(e.t):'—'}</b></div>`}).join('');
+function whoRow(){const n=names();if(nameEdit)return `<label for="nmx">Names, separated by commas</label><div class="kc" style="margin:0"><input type="text" id="nmx" value="${esc(S.names||'')}" placeholder="e.g. Dad, Mom, Alex"><button class="btn" data-act="nsave">Save</button></div>`;
+  return `<div class="whos"><span class="sm dim">Who</span>${['Everyone'].concat(n).map(w=>`<button data-act="who" data-s="${esc(w)}" aria-pressed="${(S.who||'Everyone')===w}">${esc(w)}</button>`).join('')}<button class="lnk" data-act="nedit">${n.length?'Edit names':'Add names'}</button></div>`}
+const presetBtns=()=>{const c=LCK[S.lc]||LC[0];return c.i.map((p,i)=>`<button class="btn ghost lp${p.endsWith(':')?' ask':''}" data-act="lq" data-i="${i}" style="--cc:${c.c}">${esc(p.replace(/:$/,''))}${p.endsWith(':')?'…':''}</button>`).join('')};
+const rLog=()=>{const c=LCK[S.lc]||LC[0];return `<section class="card"><h2>Since last</h2><div class="since" id="since">${sinceList()}</div></section>
+<section class="card"><h2>Quick log</h2><p class="sm dim">Tap to stamp the time. Buttons with … ask for details first.</p><div class="chips lcs">${LC.map(x=>`<button data-act="lc" data-s="${x.k}" aria-pressed="${c.k===x.k}" style="--cc:${x.c}"><span class="ldot" style="background:${x.c}"></span>${x.n}</button>`).join('')}</div><div id="who">${whoRow()}</div><div class="lg" id="lqg">${presetBtns()}</div><label for="lgx" id="lgl2">Note for ${esc(c.n.toLowerCase())}</label><div class="kc" style="margin:0"><input type="text" id="lgx" placeholder="What happened?"><button class="btn" data-act="ladd">Log</button></div></section>
+<section class="card"><h2>Log</h2><p class="sm dim">${S.bo?`Since the emergency started, ${esc(clk(S.bo))}. Times show as T+ since the start.`:'The app also logs the emergency clock, timers, signals, Morse, inventory and checklist steps automatically.'}</p>${S.bo?`<button class="btn ghost wide" style="margin-bottom:10px" data-act="lall">${logAll?'Only this emergency':'Show older entries too'}</button>`:''}<div class="chips lfc" id="lfc">${logFilters()}</div><div id="lgl">${logList()}</div><div class="lg" style="margin-top:12px"><button class="btn ghost" data-act="lcopy">Copy log</button><button class="btn ghost" data-act="lclear">${logArm?'Tap again to clear':'Clear log'}</button></div></section>`};
+const withWho=x=>{const w=S.who||'Everyone';return w!=='Everyone'?`${x} (${w})`:x};
+
+const TB={timers:rTimers,morse:rMorse,signal:rSignal,calc:rCalc,nav:rNav,log:rLog};
+const rTools=()=>`<div class="chips" role="group" aria-label="Tools">${TT.map(([k,l])=>`<button data-act="tt" data-s="${k}" aria-pressed="${S.tt===k}">${l}</button>`).join('')}</div><div id="tb">${TB[S.tt]()}</div>`;
+
+const CT=[
+['Emergency',[['Police, fire, ambulance','911',''],['Centre antipoison du Québec','1 800 463-5060','Poisoning, 24/7'],['Gas leak','911','Leave first. If 911 is down: Énergir emergency 1 800 361-8003']]],
+['Health and support',[['Info-Santé (nurse advice)','811','Option 1, 24/7'],['Info-Social (psychosocial help)','811','Option 2, 24/7'],['Suicide prevention, Québec','1 866 277-3553','1 866 APPELLE. Text 535353'],['Suicide Crisis Helpline','988','Call or text'],['Kids Help Phone','1 800 668-6868','Text 686868']]],
+['Utilities',[['Hydro-Québec outages','1 800 790-2424','Report outages and downed lines'],['Énergir gas emergency','1 800 361-8003','Only if 911 is unavailable'],['Énergir customer service','1 800 361-4568',''],['Info-Excavation','1 800 663-9228','Damaged underground lines']]],
+['Local, Mascouche',[['Ville de Mascouche','311','Or 450 474-4133'],['Sûreté du Québec, Mascouche station','450 474-7743','Weekdays 8:30 to 16:30'],['Sûreté du Québec, non-urgent','310-4141','*4141 from a mobile'],['Québec 511','511','Road conditions and closures']]]];
+const RD=[['AM 800','CJAD 800','English news and talk'],['AM 730','Radio Circulation 730','French traffic'],['FM 88.5','CBC Radio One','English public news'],['FM 95.1','Ici Radio-Canada Première','French public news'],['FM 98.5','98.5 Montréal','French news and talk'],['FM 103.5','O103.5 Joliette','Lanaudière regional'],['FM 99.1','CFNJ','Lanaudière community radio']];
+const rContacts=()=>{const cards=CT.map(([h,rows])=>`<section class="card"><h2>${h}</h2>${rows.map(([n,v,note])=>`<div class="num"><span><b>${n}</b>${note?`<span class="nt" style="display:block">${note}</span>`:''}</span><a href="tel:${v.replace(/[^\d*]/g,'')}">${v}</a></div>`).join('')}</section>`).join(''),radio=`<section class="card"><h2>Emergency radio</h2><p class="sm dim">Stations that reach Mascouche. Public news stations carry official instructions during emergencies.</p>${RD.map(([f,n,d])=>`<div class="num"><span><b>${n}</b><span class="nt" style="display:block">${d}</span></span><span class="freq">${f}</span></div>`).join('')}<div class="warn" style="margin-top:12px">Weatheradio Canada (162 MHz weather radios) shut down in March 2026. Don't rely on it.</div><ul class="sm" style="padding-left:20px;margin:0"><li>Alert Ready emergency alerts interrupt radio and TV and go to compatible phones.</li><li>AM signals reach farther, especially at night. If local stations go silent, scan the AM band.</li><li>Write these frequencies on the radio itself.</li></ul></section>`;return S.mode==='lock'?radio+cards:cards+radio};
+
+const toast=m=>{const el=$('toast');el.textContent=m;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2400)};
+function copy(t){if(!t){toast('Nothing to copy yet');return}try{navigator.clipboard.writeText(t).then(()=>toast('Copied'),()=>toast("Couldn't copy here. Long-press the text instead."))}catch(e){toast("Couldn't copy here. Long-press the text instead.")}}
+
+let ac=null;
+const actx=()=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.resume)ac.resume()}catch(e){ac=null}return ac};
+function tone(t0,d,f){const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f||700;g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(.3,t0+.006);g.gain.setValueAtTime(.3,t0+d-.012);g.gain.linearRampToValueAtTime(0,t0+d);o.connect(g);g.connect(ac.destination);o.start(t0);o.stop(t0+d+.03)}
+function beepSeq(q){if(!actx()){toast('Sound is not available here');return}let t=ac.currentTime+.1;const u=.08;q.forEach(([on,n])=>{if(on)tone(t,n*u);t+=n*u})}
+
+const L=$('light');let lt=null,wl=null;
+function lightOff(keep){clearInterval(lt);clearTimeout(lt);lt=null;if(keep)return;L.hidden=true;L.style.background='';try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}try{if(wl)wl.release()}catch(e){}wl=null}
+function lightOn(m,q){
+  lightOff(true);L.className=m==='red'?'red':'';L.style.background='';L.hidden=false;
+  try{const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(r&&r.catch)r.catch(()=>{})}catch(e){}
+  try{if(navigator.wakeLock)navigator.wakeLock.request('screen').then(w=>{wl=w},()=>{})}catch(e){}
+  if(m==='strobe'){let on=true;lt=setInterval(()=>{on=!on;L.style.background=on?'#fff':'#000'},110)}
+  if(m==='sos'||m==='seq'){const sq=m==='sos'?seqOf('... --- ...'):q,u=m==='sos'?220:200;let i=0;const step=()=>{const [on,n]=sq[i];L.style.background=on?'#fff':'#000';i++;if(i>=sq.length){if(m==='sos')i=0;else{lt=setTimeout(()=>lightOff(),n*u);return}}lt=setTimeout(step,n*u)};step()}
+}
+L.addEventListener('click',()=>lightOff());
+
+const TICK=8;
+const Dec=()=>({st:0,t0:0,cnt:0,u:80,ev:[],ph:0,cur:'',raw:'',text:''});
+let dec=Dec();
+const clampU=u=>Math.min(600,Math.max(25,u));
+function estU(D){
+  const mk=D.ev.filter(e=>e[0]).map(e=>e[1]).slice(-24),gp=D.ev.filter(e=>!e[0]&&e[1]<4000).map(e=>e[1]).slice(-24);
+  if(mk.length>=2){const s=[...mk].sort((a,b)=>a-b),n=s.length,lo=s[Math.floor(n*.2)],hi=s[Math.min(n-1,Math.floor(n*.85))];if(hi>2.2*lo)return clampU((lo+hi/3)/2)}
+  if(gp.length>=2){const s=[...gp].sort((a,b)=>a-b);return clampU(s[Math.floor(s.length*.25)])}
+  return D.u;
+}
+function decodeAll(D,trail){
+  const u=D.u=estU(D);let text='',raw='',cur='',sp=true;
+  const fl=()=>{if(cur){text+=R[cur]||'?';raw+=cur+' ';cur='';sp=false}},spc=()=>{if(text&&!sp){text+=' ';raw+='/ ';sp=true}};
+  for(const [m,d] of D.ev){if(m)cur+=d<2*u?'.':'-';else if(d>5*u){fl();spc()}else if(d>2*u)fl()}
+  if(trail>2.5*u)fl();if(trail>6*u)spc();
+  D.text=text;D.raw=raw;D.cur=cur;
+}
+function feed(D,sig,now){
+  if(sig!==!!D.st){D.cnt++;if(D.cnt<3)return false;const t=now-(D.cnt-1)*TICK;D.cnt=0;
+    if(D.t0){D.ev.push([D.st,t-D.t0]);if(D.ev.length>4000)D.ev.splice(0,1000)}
+    D.st=sig?1:0;D.t0=t;D.ph=0;decodeAll(D,0);return true}
+  D.cnt=0;
+  if(!D.st&&D.t0&&D.ev.length){const g=now-D.t0,ph=g>6*D.u?2:g>2.5*D.u?1:0;if(ph>D.ph){D.ph=ph;decodeAll(D,g);return true}}
+  return false;
+}
+function dFlush(D){decodeAll(D,1e9)}
+const mic={on:false,sens:14,floor:-95,lvl:-120,msg:'',stream:null,an:null,src:null,buf:null,timer:null,b0:0,b1:0,k:0};
+function micUI(){
+  const a=$('mtx');if(!a)return;a.textContent=(dec.text+(dec.cur?' …':''))||'—';$('mraw').textContent=dec.raw+dec.cur;
+  const b=$('mbtn');b.textContent=mic.on?'Stop listening':'Start listening';b.className='btn wide'+(mic.on?' red':'');
+  const span=30,lv=Math.max(0,Math.min(1,(mic.lvl-mic.floor)/span));$('mlv').style.width=(mic.on?lv*100:0)+'%';$('mlv').style.background=mic.on&&dec.st?'var(--g)':'var(--y)';$('mth').style.left=Math.min(100,mic.sens/span*100)+'%';
+  $('mmsg').textContent=mic.msg;
+}
+function micTick(){
+  mic.an.getFloatFrequencyData(mic.buf);
+  let mx=-200;for(let i=mic.b0;i<=mic.b1;i++)if(mic.buf[i]>mx)mx=mic.buf[i];
+  mic.lvl=mx;
+  if(!dec.st)mic.floor+= (mx-mic.floor)*(mx<mic.floor?.3:.004);
+  const thr=mic.floor+(dec.st?mic.sens*.6:mic.sens);
+  const ch=feed(dec,mx>thr,performance.now());
+  if(ch||++mic.k%6===0)micUI();
+}
+async function micStart(){
+  mic.msg='';
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){mic.msg="The microphone isn't available in this view. It works in the offline app file opened in Chrome.";micUI();return}
+  if(!actx()){mic.msg='Audio is not available here.';micUI();return}
+  try{mic.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})}
+  catch(e){mic.msg="Microphone blocked. Allow mic access when asked, or use the offline app file in Chrome.";micUI();return}
+  mic.src=ac.createMediaStreamSource(mic.stream);mic.an=ac.createAnalyser();mic.an.fftSize=1024;mic.an.smoothingTimeConstant=0;mic.src.connect(mic.an);
+  mic.buf=new Float32Array(mic.an.frequencyBinCount);const bw=ac.sampleRate/mic.an.fftSize;mic.b0=Math.floor(300/bw);mic.b1=Math.ceil(1500/bw);
+  mic.floor=-95;mic.on=true;dec.st=0;dec.t0=0;dec.cnt=0;mic.msg='Listening…';mic.timer=setInterval(micTick,TICK);micUI();
+}
+function micStop(){clearInterval(mic.timer);mic.timer=null;try{mic.stream&&mic.stream.getTracks().forEach(t=>t.stop())}catch(e){}try{mic.src&&mic.src.disconnect()}catch(e){}mic.stream=mic.src=mic.an=null;mic.on=false;dFlush(dec);if(dec.text.trim())logAdd('Morse received: '+dec.text.trim());mic.msg='';micUI()}
+
+const VIEWS={status:rStatus,kit:()=>S.mode==='lock'?rSup():rKit(),guide:rGuide,tools:rTools,contacts:rContacts};
+function render(){$('v').innerHTML=VIEWS[tab]();if(tab==='tools'&&S.tt==='calc')calcOut();document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.t===tab?'page':'false'));hdr()}
+const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;let animT=null;
+const noA=()=>RM||!!S.saver;
+function anim(el,dir){if(noA()||!el)return;el.classList.remove('enter','fr-l','fr-r');void el.offsetWidth;el.classList.add('enter');if(dir)el.classList.add(dir);clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('enter','fr-l','fr-r'),1300)}
+function countUp(){const tx=document.querySelector('.gauge text');if(noA()||!tx||!window.requestAnimationFrame)return;const p=pct(),t0=performance.now(),f=n=>{const k=Math.min(1,(n-t0)/1100),e=1-Math.pow(1-k,3);tx.textContent=Math.round(p*e)+'%';if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+function setTab(t){const oi=TABS.indexOf(tab);tab=TABS.includes(t)?t:'status';const ni=TABS.indexOf(tab);if(mic.on&&tab!=='tools')micStop();if(siren&&tab!=='tools')sirenToggle();endArm=false;resetArm=false;render();$('m').scrollTop=0;const ind=$('ind');if(ind)ind.style.transform=`translateX(${ni*100}%)`;anim($('v'),ni>=oi?'fr-r':'fr-l');if(tab==='status')try{countUp()}catch(e){}}
+function go(t){if(location.hash.slice(1)!==t){try{location.hash=t}catch(e){setTab(t)}}else setTab(t)}
+
+const d0=document;
+document.addEventListener('pointerdown',e=>{if(noA())return;const b=e.target.closest('.btn,.chips button,nav button');if(!b)return;const r=b.getBoundingClientRect(),z=Math.max(r.width,r.height),sp=d0.createElement('span');sp.className='rip';sp.style.cssText=`width:${z}px;height:${z}px;left:${e.clientX-r.left-z/2}px;top:${e.clientY-r.top-z/2}px`;b.appendChild(sp);setTimeout(()=>sp.remove(),650)});
+document.addEventListener('change',e=>{if(e.target.id==='saver'){S.saver=e.target.checked?1:0;save();hdr();toast(S.saver?'Battery saver on':'Battery saver off')}});
+document.addEventListener('click',e=>{if(e.target&&e.target.id==='sheet'){e.target.hidden=true;return}
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='tab'){go(b.dataset.t);return}
+  if(a==='tog'){const id=b.dataset.id;if(S.done[id])delete S.done[id];else S.done[id]=1;if(S.bo){const x=ALL.find(z=>z.id===id);if(x)logAdd((S.done[id]?'Kit checked: ':'Kit unchecked: ')+x.it[0])}save();hdr();const on=!!S.done[id];b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);
+    if(tab==='kit'&&S.mode==='lock'){$('kl').innerHTML=supList();const sm=$('isum');if(sm)sm.innerHTML=invSum();return}
+    if(tab==='kit'){const sec=b.closest('section'),x=ALL.find(z=>z.id===id);if(sec&&x){const its=ALL.filter(z=>z.ci===x.ci),dn=its.filter(z=>S.done[z.id]).length;const cn=sec.querySelector('.cn');if(cn)cn.textContent=dn+'/'+its.length;const bi=sec.querySelector('.trk.thin i');if(bi)bi.style.width=dn/its.length*100+'%'}
+      if(S.filter==='miss'&&on){const w=b.closest('.lw')||b;w.classList.add('leaving');setTimeout(()=>{$('kl').innerHTML=kitList()},300)}}
+    else if(on){b.classList.add('leaving');setTimeout(render,320)}else render();return}
+  if(a==='cat'){const c=b.dataset.c;S.open[c]=!S.open[c];save();$('kl').innerHTML=kitList();if(S.open[c]&&!noA()){const sc=d0.querySelector(`#kl [data-c="${c}"]`);if(sc)sc.closest('section').classList.add('pop')}return}
+  if(a==='flt'){S.filter=b.dataset.f;save();render();return}
+  if(a==='reset'){if(!resetArm){resetArm=true;render();return}S.done={};logAdd('Kit checklist reset');resetArm=false;save();render();toast('All supplies unchecked');return}
+  if(a==='bo-start'){S.bo=Date.now();endArm=false;logAdd('EMERGENCY STARTED. Blackout clock running.','em');save();render();return}
+  if(a==='bo-end'){if(!endArm){endArm=true;render();return}logAdd('All clear. Lockdown ended after '+dur(Date.now()-S.bo)+'.','em');S.bo=null;S.mode='prep';S.acts={};endArm=false;save();render();toast('Blackout clock stopped');return}
+  if(a==='gs'){S.gs=b.dataset.s;save();$('gl').innerHTML=guideList();anim($('gl'));return}
+  if(a==='g'){const k=b.dataset.k;S.go[k]=!S.go[k];save();$('gl').innerHTML=guideList();if(S.go[k]&&!noA()){const sc=d0.querySelector(`#gl [data-k="${k}"]`);if(sc)sc.closest('section').classList.add('pop')}return}
+  if(a==='pp'){S.people=Math.min(20,Math.max(1,S.people+(+b.dataset.d)));save();const pv=$('pv');if(pv)pv.textContent=S.people;const rc=$('rc');if(rc)rc.innerHTML=calc();hdr();return}
+  if(a==='light'){lightOn(b.dataset.m);logAdd({white:'Flashlight on',sos:'SOS light signal',strobe:'Strobe light on',red:'Red night light on'}[b.dataset.m]);return}
+  if(a==='mplay'){const r=tr(S.mo);if(!r.morse){toast('Type something first');return}const q=seqOf(r.morse);if(q.length<2){toast('Nothing to play');return}if(b.dataset.w==='light')lightOn('seq',q);else beepSeq(q);logAdd('Morse sent by '+(b.dataset.w==='light'?'light':'sound')+': '+(/^[.\-\s\/]+$/.test(r.morse)&&r.out!==r.morse?r.out:S.mo.trim()));return}
+  if(a==='mcopy'){copy(tr(S.mo).out);return}
+  if(a==='tt'){const v=b.dataset.s;if(mic.on&&v!=='morse')micStop();if(siren&&v!=='signal')sirenToggle();S.tt=v;save();render();anim($('tb'));return}
+  if(a==='teststart'){BAK=JSON.stringify(S);try{localStorage.setItem(K+'_bak',BAK)}catch(e){}S.test=1;testArm=false;save();logAdd('Test mode started');render();toast('Test mode on');return}
+  if(a==='testend'){if(!testArm){testArm=true;hdr();toast('Tap End test again to restore');return}testArm=false;lightOff();if(siren)sirenToggle();if(mic.on){mic.on=false;clearInterval(mic.timer);try{mic.stream&&mic.stream.getTracks().forEach(t=>t.stop())}catch(e){}}
+    let old=null;try{old=JSON.parse(BAK||'null')}catch(e){}
+    S=Object.assign({},D,old||S);S.test=0;norm();try{localStorage.removeItem(K+'_bak')}catch(e){}BAK=null;dec=Dec();save();render();toast(old?'Test ended. Everything is back as it was.':'Test ended. No backup was found.');return}
+  if(a==='modep'){if(S.mode==='lock'&&S.bo)go('status');else openSheet();return}
+  if(a==='lockopen'){openSheet();return}
+  if(a==='lockcancel'){$('sheet').hidden=true;return}
+  if(a==='lockgo'){const k=b.dataset.s,sc=SCN[k];$('sheet').hidden=true;S.mode='lock';S.scen=k;if(!S.bo)S.bo=Date.now();S.acts={};S.gs=sc.g;S.go[sc.g+'0']=true;S.tt='timers';endArm=false;logAdd('LOCKDOWN STARTED: '+sc.n,'em');if(k==='nuclear')addT('Fallout shelter',86400);save();if(tab==='status'){setTab('status')}else go('status');toast('Lockdown: '+sc.n);return}
+  if(a==='act'){const k=b.dataset.k,sc=SCN[S.scen]||SCN.blackout,[pi,ii]=k.split('-').map(Number);S.acts[k]=!S.acts[k];if(S.acts[k])logAdd('Done: '+sc.a[pi][2][ii]);save();b.classList.toggle('on',!!S.acts[k]);b.setAttribute('aria-pressed',!!S.acts[k]);const all=actsAll(sc),dn=all.filter(z=>S.acts[z]).length;$('actbar').style.width=dn/all.length*100+'%';const an=$('actn');if(an)an.textContent=dn+' of '+all.length+' done';const ph=$('ph_'+pi);if(ph){const [n,h,l]=sc.a[pi];ph.outerHTML=phaseHead(pi,h,l)}return}
+  if(a==='low'){const id=b.dataset.id,x=ALL.find(z=>z.id===id);const st=((S.low[id]||0)+1)%3;if(st)S.low[id]=st;else delete S.low[id];if(x)logAdd((['Restocked: ','Running low: ','Out of: '][st])+x.it[0]);save();b.className='q st'+st;b.textContent=['OK','Low','Out'][st];const sm=$('isum');if(sm)sm.innerHTML=invSum();return}
+  if(a==='inv'){const id=b.dataset.id,x=ALL.find(z=>z.id===id),iv=x&&invOf(x);if(!iv)return;invSet(id,iv.n+(+b.dataset.d));const inp=b.parentNode.querySelector('input');if(inp)inp.value=invOf(x).n;return}
+  if(a==='supall'){S.supAll=+b.dataset.v;save();render();return}
+  if(a==='goguide'){go('guide');return}
+  if(a==='gomorse'){S.tt='morse';save();go('tools');return}
+  if(a==='goradio'){go('contacts');return}
+  if(a==='prd'){const k=b.dataset.k,it=PR.find(x=>x[0]===k);S.pr[k]=Date.now();logAdd('Prep done: '+it[1]);save();render();toast('Nice. Logged.');return}
+  if(a==='bkcopy'){copy(JSON.stringify(Object.assign({},S,{test:0,app:'blackout-protocol'})));return}
+  if(a==='bkfile'){try{const bl=new Blob([JSON.stringify(Object.assign({},S,{test:0,app:'blackout-protocol'}))],{type:'application/json'}),u=URL.createObjectURL(bl),l=document.createElement('a');l.href=u;l.download='blackout-protocol-backup-'+loc(Date.now()).slice(0,10)+'.json';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast('Saving backup file. If nothing happens, use Copy backup.')}catch(er){toast('Saving files is blocked here. Use Copy backup.')}return}
+  if(a==='bkload'){const raw=($('bkin').value||'').trim();bkRaw=raw;let o=null;try{o=JSON.parse(raw)}catch(er){}if(!o||typeof o!=='object'||!o.done){toast("That doesn't look like a Blackout Protocol backup");bkArm=false;bkRaw='';render();return}if(!bkArm){bkArm=true;render();return}bkArm=false;bkRaw='';S=Object.assign({},D,o);S.test=0;norm();save();render();toast('Backup restored');return}
+  if(a==='wipe'){if(!wipeArm){wipeArm=true;render();return}wipeArm=false;try{localStorage.removeItem(K);localStorage.removeItem(K+'_bak')}catch(er){}S=Object.assign({},D,{done:{},open:{},plan:{},go:{},timers:[],log:[],cv:{},custom:[],acts:{},low:{},inv:{},pr:{}});S.init=1;norm();save();render();toast('All data erased');return}
+  if(a==='golog'){S.tt='log';save();go('tools');return}
+  if(a==='gotimers'){S.tt='timers';save();go('tools');return}
+  if(a==='tpre'){const [l,s,r]=TP[+b.dataset.g][1][+b.dataset.i];if(s==='up')addUp(l);else addT(l,s,r);return}
+  if(a==='tcustom'){const l=($('ctl').value||'').trim()||'Timer',sec=(parseFloat($('cth').value)||0)*3600+(parseFloat($('ctm').value)||0)*60;if(sec<1){toast('Set hours or minutes first');return}addT(l,Math.round(sec),$('ctr').checked);return}
+  if(a==='tcustomup'){addUp(($('ctl').value||'').trim()||'Stopwatch');return}
+  if(a==='tpause'){const t=tById(b.dataset.id);if(!t)return;const n=Date.now();if(t.up!=null){if(t.run){t.acc+=n-t.up;t.run=false}else{t.up=n;t.run=true}}else{if(t.run){t.rem=Math.max(0,t.e-n);t.run=false}else{t.e=n+t.rem;t.run=true}}save();tRefresh();return}
+  if(a==='tplus'){const t=tById(b.dataset.id);if(!t)return;if(t.run)t.e+=3e5;else t.rem+=3e5;save();tRefresh();return}
+  if(a==='tdel'||a==='tdone'){S.timers=S.timers.filter(t=>t.id!==b.dataset.id);save();tab==='status'?render():tRefresh();return}
+  if(a==='tagain'){const t=tById(b.dataset.id);if(!t)return;t.e=Date.now()+t.d*1000;t.run=true;t.done=false;actx();save();tRefresh();return}
+  if(a==='siren'){sirenToggle();if(siren)logAdd('Siren sounded');const sb=$('sirb');if(sb)sb.textContent=siren?'Stop siren':'Siren';return}
+  if(a==='blasts'){if(!actx()){toast('Sound is not available here');return}const t0=ac.currentTime+.05;for(let k=0;k<3;k++)tone(t0+k*1.6,1,2600);logAdd('3 whistle blasts sounded');return}
+  if(a==='sosb'){beepSeq(seqOf('... --- ...'));logAdd('SOS beeps sent');return}
+  if(a==='cvset'){const k=b.dataset.k,v=b.dataset.v;S.cv[k]=isNaN(+v)?v:+v;save();b.parentNode.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));calcOut();return}
+  if(a==='cmpstart'){cmpStart();return}
+  if(a==='lq'){const c=LCK[S.lc]||LC[0],pr=c.i[+b.dataset.i];if(pr.endsWith(':')){const el=$('lgx');el.value=pr+' ';el.focus();toast('Add the details, then tap Log');return}logAdd(withWho(pr),'',c.k);toast('Logged: '+pr);return}
+  if(a==='lc'){S.lc=b.dataset.s;save();b.parentNode.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('lqg').innerHTML=presetBtns();anim($('lqg'));const l2=$('lgl2');if(l2)l2.textContent='Note for '+(LCK[S.lc]||LC[0]).n.toLowerCase();return}
+  if(a==='who'){S.who=b.dataset.s;save();$('who').innerHTML=whoRow();return}
+  if(a==='nedit'){nameEdit=true;$('who').innerHTML=whoRow();const n=$('nmx');if(n)n.focus();return}
+  if(a==='nsave'){S.names=($('nmx').value||'').slice(0,200);nameEdit=false;if(!['Everyone'].concat(names()).includes(S.who))S.who='Everyone';save();$('who').innerHTML=whoRow();return}
+  if(a==='lf'){S.lf=b.dataset.s;save();$('lgl').innerHTML=logList();$('lfc').innerHTML=logFilters();return}
+  if(a==='ladd'){const el=$('lgx'),v=(el.value||'').trim();if(!v){toast('Write something first');return}logAdd(withWho(v),'',S.lc||LC[0].k);el.value='';toast('Logged');return}
+  if(a==='ldel'){S.log.splice(+b.dataset.i,1);save();$('lgl').innerHTML=logList();return}
+  if(a==='lcopy'){copy(logShown().reverse().map(([e])=>(S.bo&&e.t>=S.bo-1000?tplus(e.t)+'  ':'')+clk(e.t)+'  ['+catOf(e.c).n+']  '+e.x).join('\n'));return}
+  if(a==='lall'){logAll=!logAll;render();return}
+  if(a==='lclear'){if(!logArm){logArm=true;render();return}S.log=[];logArm=false;save();render();return}
+  if(a==='addgear'){const n=($('ag_n').value||'').trim();if(!n){toast('Name the item first');return}const ci=+$('ag_c').value;S.custom.push({id:'u'+Date.now(),ci,it:[n.slice(0,80),($('ag_q').value||'').trim().slice(0,20)||'1',($('ag_t').value||'').trim().slice(0,120),0,$('ag_k').checked?1:0]});S.open[ci]=true;buildAll();save();render();toast('Added to '+C[ci].n);return}
+  if(a==='gdel'){const id=b.dataset.id;S.custom=S.custom.filter(x=>x.id!==id);delete S.done[id];buildAll();save();$('kl').innerHTML=kitList();hdr();toast('Removed');return}
+  if(a==='mic'){if(mic.on)micStop();else micStart();return}
+  if(a==='mclr'){dec=Dec();micUI();return}
+  if(a==='mcp'){copy(dec.text.trim());return}
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='ks'){S.q=t.value;save();$('kl').innerHTML=kitList();return}
+  if(t.dataset.n){S[t.dataset.n]=Math.max(0,parseFloat(t.value)||0);save();$('rc').innerHTML=calc();return}
+  if(t.id==='gq'){S.gq=t.value;save();$('gl').innerHTML=guideList();return}
+  if(t.id==='msens'){mic.sens=36-(+t.value);micUI();return}
+  if(t.dataset.inv){const v=parseFloat(t.value);if(!isNaN(v))invSet(t.dataset.inv,v);return}
+  if(t.dataset.c){const k=t.dataset.c,v=parseFloat(t.value);S.cv[k]=k==='t'?(isNaN(v)?0:v):Math.max(0,v||0);save();calcOut();return}
+  if(t.id==='mi'){S.mo=t.value;save();$('mo').innerHTML=mOut();return}
+  if(t.id==='bos'){const v=new Date(t.value).getTime();if(v&&v<=Date.now()){S.bo=v;const em=S.log.find(e=>e.k==='em'&&/STARTED/.test(e.x));if(em)em.t=v;save();const f=$('fw');if(f)f.innerHTML=fwLive()}}
+});
+window.addEventListener('hashchange',()=>setTab(location.hash.slice(1)));
+setInterval(()=>{if(S.mode==='lock'&&S.bo){const c=$('clk');if(c)c.textContent='T+ '+dur(Date.now()-S.bo);const f=$('fw');if(f)f.innerHTML=fwLive();hdr()}},1000);
+setInterval(tTick,500);
+setInterval(()=>{const sn=$('since');if(sn)sn.innerHTML=sinceList()},30000);
+
+function norm(){if(!S.pr||typeof S.pr!=='object')S.pr={};if(!S.inv||typeof S.inv!=='object')S.inv={};if(!S.low||typeof S.low!=='object')S.low={};if(!S.acts||typeof S.acts!=='object')S.acts={};if(S.bo&&S.mode!=='lock'){S.mode='lock';S.scen=S.scen||'blackout'}if(!S.bo)S.mode='prep';S.cv=Object.assign({},CVD,S.cv||{});['timers','log','custom'].forEach(k=>{if(!Array.isArray(S[k]))S[k]=[]});buildAll()}
+const boot=d=>{try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}const shl=document.querySelector('.shl');if(shl)shl.innerHTML=SCK.map(k=>`<button class="btn ${k==='nuclear'?'red':'ghost'} wide" data-act="lockgo" data-s="${k}">${SCN[k].n}</button>`).join('');if(d&&typeof d==='object'&&d.done)S=Object.assign({},D,d);norm();$('logo').innerHTML=tref();setTab(location.hash.slice(1))};
+if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(()=>S);
+if(window.claude&&window.claude.hot&&window.claude.hot.ready)window.claude.hot.ready(boot);else boot(window.claude&&window.claude.hot?window.claude.hot.data:{});
+}
+</script>
+<script>if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script>
+</body>
+</html>
