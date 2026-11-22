@@ -34,6 +34,12 @@ About 60 topics in 8 scenarios: blackout, winter storm, nuclear, cyber & war, fi
 - Compass and sunrise / sunset times
 - Emergency numbers and radio stations (currently Québec / Montréal)
 
+## 🚧 Updates on the way
+
+Blackout Protocol is actively being improved. Coming next: more regions beyond Québec (local numbers and radio), more guide topics and tools, and a Google Play release. Installed copies update themselves the next time you open the app online.
+
+Ideas or bugs? Open an issue on this repo.
+
 ## Privacy
 
 Everything stays on your device in your browser's storage. Nothing is sent anywhere. You can copy a backup and restore it on another phone.
