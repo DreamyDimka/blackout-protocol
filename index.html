@@ -690,7 +690,7 @@ const D={done:{},open:{},plan:{},bo:null,people:4,water:112,food:7,filter:'all',
 let S=null;
 try{S=JSON.parse(localStorage.getItem(K)||'null')}catch(e){S=null}
 S=Object.assign({},D,S||{});if(!Array.isArray(S.timers))S.timers=[];if(!Array.isArray(S.log))S.log=[];if(!Array.isArray(S.custom))S.custom=[];
-if(!S.init){C.forEach((c,ci)=>c.i.forEach((it,ii)=>{if(it[3])S.done[ci+'-'+ii]=1}));S.init=1}
+if(!S.init){S.init=1}
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
