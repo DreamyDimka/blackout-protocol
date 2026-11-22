@@ -1062,14 +1062,17 @@ function micTick(){
   if(ch||++mic.k%6===0)micUI();
 }
 async function micStart(){
-  mic.msg='';
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){mic.msg="The microphone isn't available in this view. It works in the offline app file opened in Chrome.";micUI();return}
+  mic.msg='';const FIX=" Fix: in Chrome tap ⋮ → Settings → Site settings → Microphone and allow this site. Also check Android Settings → Apps → Chrome (or Blackout) → Permissions → Microphone → Allow. Then try again.";
+  if(!window.isSecureContext||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){mic.msg="This copy of the app can't use the microphone (saved files and the Claude link block it). Open the installed app, or https://dreamydimka.github.io/blackout-protocol/ in Chrome.";micUI();return}
+  try{if(navigator.permissions&&navigator.permissions.query){const ps=await navigator.permissions.query({name:'microphone'});if(ps.state==='denied'){mic.msg='The microphone is blocked for this app, so Chrome won\'t ask again.'+FIX;micUI();return}}}catch(e){}
   if(!actx()){mic.msg='Audio is not available here.';micUI();return}
+  mic.msg='Asking for the microphone… tap Allow when your phone asks.';micUI();
   try{mic.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})}
-  catch(e){mic.msg="Microphone blocked. Allow mic access when asked, or use the offline app file in Chrome.";micUI();return}
+  catch(e){const n=e&&e.name;mic.msg=n==='NotAllowedError'||n==='SecurityError'?'The microphone was blocked.'+FIX:n==='NotFoundError'?'No microphone was found on this device.':n==='NotReadableError'?'Another app is using the microphone (a call or recorder). Close it and try again.':'The microphone could not start ('+(n||'unknown error')+').';micUI();return}
+  try{if(ac.state==='suspended')await ac.resume()}catch(e){}
   mic.src=ac.createMediaStreamSource(mic.stream);mic.an=ac.createAnalyser();mic.an.fftSize=1024;mic.an.smoothingTimeConstant=0;mic.src.connect(mic.an);
   mic.buf=new Float32Array(mic.an.frequencyBinCount);const bw=ac.sampleRate/mic.an.fftSize;mic.b0=Math.floor(300/bw);mic.b1=Math.ceil(1500/bw);
-  mic.floor=-95;mic.on=true;dec.st=0;dec.t0=0;dec.cnt=0;mic.msg='Listening…';mic.timer=setInterval(micTick,TICK);micUI();
+  mic.floor=-95;mic.on=true;dec.st=0;dec.t0=0;dec.cnt=0;mic.msg='Listening… The bar moves when it hears sound.';mic.timer=setInterval(micTick,TICK);micUI();
 }
 function micStop(){clearInterval(mic.timer);mic.timer=null;try{mic.stream&&mic.stream.getTracks().forEach(t=>t.stop())}catch(e){}try{mic.src&&mic.src.disconnect()}catch(e){}mic.stream=mic.src=mic.an=null;mic.on=false;dFlush(dec);if(dec.text.trim())logAdd('Morse received: '+dec.text.trim());mic.msg='';micUI()}
 
