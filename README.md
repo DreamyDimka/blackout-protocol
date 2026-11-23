@@ -51,6 +51,10 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 
 ## 📋 Update log
 
+**v2.3 (Nov 22, 2026)**
+- Nearby places: distance slider (1 to 25 km) for loading and showing places.
+- Nearby places load more reliably: longer wait, live progress, and two backup map data servers if the main one is busy.
+
 **v2.2 (Nov 22, 2026)**
 - Map tool: street map online, radar and compass arrow offline, saved places with GPS
 - Nearby places by category (hospitals, police, fire, pharmacies, grocery, gas and more), saved for offline
