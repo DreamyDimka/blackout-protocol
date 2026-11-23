@@ -30,7 +30,7 @@ Install it from Chrome (⋮ → *Install app*) and it works with no internet or 
 
 ## Guide
 
-About 100 topics in 9 sections, each with a **No help coming** part for when nobody can be reached:
+111 topics in 9 sections, each with a **No help coming** part for when nobody can be reached:
 - First aid and a Health & 2nd aid section (wound closure, infection, dehydration, fever, medicines, babies, older adults)
 - Common over-the-counter medicine doses from Canadian labels
 - Blackout, winter storm, nuclear, cyber & war, fire & gas, survival skills, flood / heat / quake
@@ -50,6 +50,12 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 - Ultra saver mode (black and dim red) for maximum battery
 
 ## 📋 Update log
+
+**v2.7 (Nov 23, 2026)**
+
+- 22 new guides (111 total), in English and French: charging phones, hidden water in your home, one warm room, sump pump, using your car in an outage, downed lines and ice-damaged trees, shovelling snow, walking on ice, kitchen and grease fires, home fire escape plan, animal bites, fainting, heat stroke, small cuts and splinters, keeping kids calm, money when cards stop working, working with neighbours, lost outdoors, safe outdoor fire, boil-water advisory, thunderstorms and lightning, sickness spreading at home.
+- 17 new drawings for the new guides, plus 3 public-domain FEMA/USFA images.
+- Link preview: sharing the app link now shows a picture, title and description.
 
 **v2.6 (Nov 22, 2026)**
 
