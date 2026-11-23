@@ -51,6 +51,12 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 
 ## 📋 Update log
 
+**v2.2 (Nov 22, 2026)**
+- Map tool: street map online, radar and compass arrow offline, saved places with GPS
+- Nearby places by category (hospitals, police, fire, pharmacies, grocery, gas and more), saved for offline
+- Back-track: record your path and get guided back
+- Share your location by text message; places added to the paper backup
+
 **v2.1 (Nov 22, 2026)**
 - Survival timer in Kit and Supplies: days of water, food, heat fuel, phone power and meds
 - Add supplies: water containers, food by calories, heat fuel by BTU (propane, butane, kerosene, firewood)
