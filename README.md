@@ -93,3 +93,5 @@ Everything stays on your device. Nothing is sent anywhere. Photos and recordings
 ## Disclaimer
 
 General safety information, not medical or professional advice. Always follow official instructions, and call 911 when you can.
+
+- v2.4: French version: Auto/English/Français switch in Settings; screens, kit, plan, tools, map and printout in French. Survival guide and emergency steps in French too (stroke check uses VITE).
