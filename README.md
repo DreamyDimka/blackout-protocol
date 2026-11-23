@@ -51,6 +51,12 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 
 ## 📋 Update log
 
+**v2.5 (Nov 22, 2026)**
+
+- Games in Tools: rules for 13 card games (Crazy Eights, Go Fish, President, Hearts, Spades, Euchre, Gin Rummy, Solitaire, Poker and more) and how to make your own deck.
+- No gear: 30 games that need nothing (Monkey's Paw, 20 Questions, Mafia, charades, riddles, Simon says, hangman and more).
+- D&D: dice roller with advantage, character sheets, campaign notes, quick rules, 4 starter classes, monsters and a starter adventure.
+
 **v2.4 (Nov 22, 2026)**
 
 - French version: Auto / English / Français switch in Settings (Auto follows your phone language).
