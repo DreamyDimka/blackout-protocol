@@ -51,6 +51,10 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 
 ## 📋 Update log
 
+**v2.6 (Nov 22, 2026)**
+
+- Pictures in the guide: 11 original drawings (CPR, choking, tourniquet, shock, nosebleed, generator, bucket toilet, ground signals, North Star, P.A.S.S., safe water) plus 18 public-domain/CC0 images from FEMA, the US Army and Navy, and Wikimedia Commons. Pictures also print on the paper backup. Works offline, in English and French.
+
 **v2.5 (Nov 22, 2026)**
 
 - Games in Tools: rules for 13 card games (Crazy Eights, Go Fish, President, Hearts, Spades, Euchre, Gin Rummy, Solitaire, Poker and more) and how to make your own deck.
@@ -93,9 +97,13 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 
 ## 🚧 Updates on the way
 
-Coming next: pictures in the guide, phone-to-phone sharing, more regions beyond Québec, and a Google Play release. Installed copies update themselves the next time you open the app online.
+Coming next: phone-to-phone sharing, more regions beyond Québec, and a Google Play release. Installed copies update themselves the next time you open the app online.
 
 Ideas or bugs? Open an issue on this repo.
+
+## Image credits
+
+Guide pictures that aren't original drawings are public domain or CC0: FEMA / U.S. Fire Administration pictographs (CPR, bleeding, generator, stop drop and roll, trapped by fire, heaters, flashlights, stove heating, stovetop fire), U.S. Army (abdominal thrusts, recovery position, North Star), U.S. Navy (upper-arm splint), Pearson Scott Foresman and CountingPine via Wikimedia Commons (knots), Baedr-9439 via Wikimedia Commons, CC0 (sling), and a CC0 hypothermia wrap illustration via Wikimedia Commons.
 
 ## Privacy
 
