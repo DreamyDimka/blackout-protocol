@@ -51,6 +51,11 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 
 ## 📋 Update log
 
+**v2.4 (Nov 22, 2026)**
+
+- French version: Auto / English / Français switch in Settings (Auto follows your phone language).
+- Every screen, the kit, plan, tools, map, printout, survival guide and emergency steps in French. The stroke check uses VITE.
+
 **v2.3 (Nov 22, 2026)**
 - Nearby places: distance slider (1 to 25 km) for loading and showing places.
 - Nearby places load more reliably: longer wait, live progress, and two backup map data servers if the main one is busy.
@@ -82,7 +87,7 @@ About 100 topics in 9 sections, each with a **No help coming** part for when nob
 
 ## 🚧 Updates on the way
 
-Coming next: French, pictures in the guide, phone-to-phone sharing, more regions beyond Québec, and a Google Play release. Installed copies update themselves the next time you open the app online.
+Coming next: pictures in the guide, phone-to-phone sharing, more regions beyond Québec, and a Google Play release. Installed copies update themselves the next time you open the app online.
 
 Ideas or bugs? Open an issue on this repo.
 
@@ -93,5 +98,3 @@ Everything stays on your device. Nothing is sent anywhere. Photos and recordings
 ## Disclaimer
 
 General safety information, not medical or professional advice. Always follow official instructions, and call 911 when you can.
-
-- v2.4: French version: Auto/English/Français switch in Settings; screens, kit, plan, tools, map and printout in French. Survival guide and emergency steps in French too (stroke check uses VITE).
